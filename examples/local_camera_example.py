@@ -13,4 +13,5 @@ while True:
     if cv2.waitKey(50) & 0xFF == ord('q'):
         break
 
+
 cv2.destroyAllWindows()

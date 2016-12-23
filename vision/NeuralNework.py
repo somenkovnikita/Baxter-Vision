@@ -1,6 +1,9 @@
 class NeuralNetwork:
+    def __init__(self):
+        pass
+
     def train(self, dataset):
         pass
 
-    def forward(self, data):
+    def classify(self, data):
         pass
