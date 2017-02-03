@@ -1,5 +1,5 @@
-from vision import NeuralNetwork
 from argparse import ArgumentParser
+
 
 def train():
     pass

@@ -53,9 +53,9 @@ if __name__ == "__main__":
         exit(-1)
     base_dir = sys.argv[1]
 
-    image_size = (100, 100)
+    image_size = (200, 200)
     in_layer_size = image_size[0] * image_size[1]
-    hidden_layer_size = 100
+    hidden_layer_size = 2500
     out_layer_size = 30
 
     images = read_images(base_dir)
@@ -79,10 +79,10 @@ if __name__ == "__main__":
         print input_array[i, :]
         print output_array[i, :]
 
-    layers = (in_layer_size, hidden_layer_size, out_layer_size)
-
-    network = NeuralNetwork(layers)
-    network.train(input_array, output_array, True)
+    # layers = (in_layer_size, hidden_layer_size, out_layer_size)
+    #
+    # network = NeuralNetwork(layers)
+    # network.train(input_array, output_array, True)
     print images[0][0]
     a = numpy.array(list(images[0][0]), 'float')
     cc = numpy.zeros((im_size, in_layer_size), 'float')
