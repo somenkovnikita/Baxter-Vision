@@ -1,5 +1,6 @@
+import cv2
+import json
 import numpy as np
-import cv2, json
 
 
 class NeuralNetworkParameters:
@@ -12,13 +13,13 @@ class NeuralNetworkParameters:
         cv2.ANN_MLP_TRAIN_PARAMS_BACKPROP,
         cv2.ANN_MLP_TRAIN_PARAMS_RPROP,
     }
-    default_max_steps = 1e4
-    default_max_error = 1e-4
+    default_max_steps = 10000
+    default_max_error = 0.0001
     default_stop_criteria = (
         cv2.TERM_CRITERIA_COUNT |
         cv2.TERM_CRITERIA_EPS,
         default_max_steps,
-        default_max_steps)
+        default_max_error)
     default_parameters = dict(
         term_crit=default_stop_criteria,
         train_method=cv2.ANN_MLP_TRAIN_PARAMS_RPROP,
@@ -33,6 +34,9 @@ class NeuralNetworkParameters:
 
     def __init__(self, **kwargs):
         self.parameters = self.default_parameters
+        self.set_parameters(**kwargs)
+
+    def set_parameters(self, **kwargs):
         self.parameters.update(kwargs)
 
     def get_parameters(self):
@@ -41,10 +45,10 @@ class NeuralNetworkParameters:
 
 class NeuralNetwork:
     """
-    Sweet wrapper for opencv multi-layer perceptrons, oriented for images
+    Sweet wrapper for opencv multi-layer perceptrons, oriented for training_set
     """
     def __init__(self, layers=None, filename=None):
-        # type: (list, str) -> None
+        # type: (tuple, str) -> None
         """
         :param layers: Set structure neural network
         :param filename: Set file for load trained network
@@ -67,7 +71,7 @@ class NeuralNetwork:
     def train(self, input_images, output_classes, parameters=NeuralNetworkParameters()):
         # type: (list, list, NeuralNetworkParameters) -> int
         """
-        :param input_images: Input dataset of images
+        :param input_images: Input dataset of training_set
         :param output_classes: Output dataset of correct class
         :param parameters: Train parameters
         :return: Count of iteration of train
@@ -78,9 +82,10 @@ class NeuralNetwork:
         output_size = self.layers_size[-1]
         self.classes = {i: c for i, c in enumerate(set(output_classes))}
         flatten_classes = []
+        indices = {v: k for k, v in self.classes.items()}
         for class_ in output_classes:
             row = np.zeros(output_size) - 1.0
-            row[self.classes[class_]] = 1.0
+            row[indices[class_]] = 1.0
             flatten_classes.append(row)
         output_matrix = np.asarray(flatten_classes, np.float)
 
