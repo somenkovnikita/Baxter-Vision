@@ -17,7 +17,7 @@ class ImagesFinder:
             check_path = os.path.join(basedir, elem)
             if not os.path.isdir(check_path):
                 continue
-            pattern = os.path.join(basedir, elem, '*')
+            pattern = os.path.join(basedir, elem, "*")
             for images_fn in glob.glob(pattern):
                 if imghdr.what(images_fn) is None:
                     continue
@@ -29,7 +29,7 @@ class ImagesFinder:
         """
         :param filename: Set file to save
         """
-        with open(filename, 'w') as file:
+        with open(filename, "w") as file:
             for image_fn in self.images_filename:
                 join_gen = (str(e) for e in image_fn)
-                file.write(', '.join(join_gen) + '\n')
+                file.write(", ".join(join_gen) + "\n")

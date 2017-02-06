@@ -1,46 +1,7 @@
 import cv2
 import json
 import numpy as np
-
-
-class NeuralNetworkParameters:
-    criteria_types = {
-        cv2.TERM_CRITERIA_COUNT,
-        cv2.TERM_CRITERIA_EPS,
-        cv2.TERM_CRITERIA_MAX_ITER
-    }
-    train_methods = {
-        cv2.ANN_MLP_TRAIN_PARAMS_BACKPROP,
-        cv2.ANN_MLP_TRAIN_PARAMS_RPROP,
-    }
-    default_max_steps = 10000
-    default_max_error = 0.0001
-    default_stop_criteria = (
-        cv2.TERM_CRITERIA_COUNT |
-        cv2.TERM_CRITERIA_EPS,
-        default_max_steps,
-        default_max_error)
-    default_parameters = dict(
-        term_crit=default_stop_criteria,
-        train_method=cv2.ANN_MLP_TRAIN_PARAMS_RPROP,
-        bp_dw_scale=0.01,
-        bp_moment_scale=0.1,
-        rp_dw0=0.1,
-        rp_dw_plus=1.2,
-        rp_dw_minus=0.5,
-        rp_dw_min=1.19209e-07,
-        rp_dw_max=50.0
-    )
-
-    def __init__(self, **kwargs):
-        self.parameters = self.default_parameters
-        self.set_parameters(**kwargs)
-
-    def set_parameters(self, **kwargs):
-        self.parameters.update(kwargs)
-
-    def get_parameters(self):
-        return self.parameters
+import NeuralNetworkParams
 
 
 class NeuralNetwork:
@@ -55,21 +16,21 @@ class NeuralNetwork:
         """
         self.classes = dict()
         if filename:
-            with open(filename + '.cl') as cl_file:
+            with open(filename + ".cl") as cl_file:
                 line = cl_file.readline().strip()
                 self.classes = json.loads(line)
-            self.layers_size = self.classes['LayerSize']
-            self.classes.pop('LayerSize')
+            self.layers_size = self.classes["LayerSize"]
+            self.classes.pop("LayerSize")
             self.network = cv2.ANN_MLP()
             self.network.load(filename)
         elif layers:
             self.layers_size = layers
             self.network = cv2.ANN_MLP(np.array(layers))
         else:
-            raise Exception('layers or filename is require')
+            raise Exception("Layers or filename is require")
 
-    def train(self, input_images, output_classes, parameters=NeuralNetworkParameters()):
-        # type: (list, list, NeuralNetworkParameters) -> int
+    def train(self, input_images, output_classes, parameters=NeuralNetworkParams()):
+        # type: (list, list, NeuralNetworkParams) -> int
         """
         :param input_images: Input dataset of training_set
         :param output_classes: Output dataset of correct class
@@ -92,7 +53,7 @@ class NeuralNetwork:
         sample_weights = None
         iteration = self.network.train(
             input_matrix, output_matrix, sample_weights,
-            params=parameters.get_parameters())
+            params=parameters.get())
         return iteration
 
     def classify(self, image):
@@ -104,7 +65,7 @@ class NeuralNetwork:
         flatten = image.flatten()
         ret_value, output = self.network.predict(flatten)
         if ret_value is not 0:
-            raise Exception('Error classify')
+            raise Exception("Error classify")
         return self.classes[np.argmax(output)]
 
     def save(self, filename):
@@ -113,9 +74,9 @@ class NeuralNetwork:
         :param filename: Set file for save trained network
         :return:
         """
-        self.classes['LayerSize'] = self.layers_size
-        with open(filename + '.cl', 'w') as cl_file:
+        self.classes["LayerSize"] = self.layers_size
+        with open(filename + ".cl", "w") as cl_file:
             classes = json.dumps(self.classes)
             cl_file.write(classes)
         self.network.save(filename)
-        self.classes.pop('LayerSize')
+        self.classes.pop("LayerSize")

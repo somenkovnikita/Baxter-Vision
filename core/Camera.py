@@ -11,7 +11,7 @@ class Camera:
         self.resolution = resolution
         size = (resolution[1], resolution[0], 3)
         self.cv_image = numpy.zeros(size, numpy.uint8)
-        self.camera_name = camera_name + '_hand_camera'
+        self.camera_name = camera_name + "_hand_camera"
         self.camera = CameraController(self.camera_name)
         self.bridge = CvBridge()
         self.publisher = None
@@ -27,7 +27,7 @@ class Camera:
         self.camera.white_balance_green = -1
         self.camera.white_balance_blue = -1
 
-        cam_pub = '/cameras/{0}/image'.format(self.camera_name)
+        cam_pub = "/cameras/{0}/image".format(self.camera_name)
         self.publisher = rospy.Subscriber(cam_pub, Image, self._on_got_image)
 
     def stop(self):
@@ -43,6 +43,6 @@ class Camera:
 
     @staticmethod
     def _reset_cameras():
-        reset_srv = rospy.ServiceProxy('cameras/reset', std_srvs.srv.Empty)
-        rospy.wait_for_service('cameras/reset', timeout=10)
+        reset_srv = rospy.ServiceProxy("cameras/reset", std_srvs.srv.Empty)
+        rospy.wait_for_service("cameras/reset", timeout=10)
         reset_srv()

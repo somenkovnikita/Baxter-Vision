@@ -12,8 +12,8 @@ class CameraForTestAlgorithm:
 
             processed_image = image_processor(image)
 
-            cv2.imshow('real-time camera', processed_image)
+            cv2.imshow("real-time camera", processed_image)
             key = cv2.waitKey(10)
 
-            if key & 0xFF == ord('q'):
+            if key & 0xFF == ord("q"):
                 return
