@@ -28,7 +28,7 @@ class camera:
         return self.cv_image
 
     def start(self):
-        cam_pub = '/cameras/{0}/image'.format(self.name)
+        cam_pub = "/cameras/{0}/image".format(self.name)
         print cam_pub
         rospy.Subscriber(cam_pub, Image, self.callback)
 
