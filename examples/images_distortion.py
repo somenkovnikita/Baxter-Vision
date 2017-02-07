@@ -1,15 +1,18 @@
-# coding=utf-8
 import os
 import cv2
 import numpy
 
 import baxter.utils
 
-print "Искажение реальных изображений"
+# Images distortion.
+# We can use this script for generate
+# images for neural network
+# D.D.M. 2016(C)
+print "Images distortion example"
 
 
 def im_distortion(file_dir):
-    # Шаблоны
+    # Tepmlates
     os.makedirs(file_dir)
     files, templates = baxter.Camera.utils.get_templates()
     i = 0
@@ -19,7 +22,7 @@ def im_distortion(file_dir):
         new_filename = file_dir + "/" + filename + ".jpg"
         # (thresh, im_bw) = cv2.threshold(new_img, 128, 255, cv2.THRESH_BINARY)
 
-        # Перспектива
+        # Perspective
         # http://docs.opencv.org/trunk/da/d6e/tutorial_py_geometric_transformations.html
         rows, cols, ch = temp.shape
         pts1 = numpy.float32([[16, 16], [100, 164], [10, 140]])
