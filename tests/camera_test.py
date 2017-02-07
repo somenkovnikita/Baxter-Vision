@@ -1,4 +1,3 @@
-# coding=utf-8
 import cv2
 from camera import processor
 
@@ -15,6 +14,7 @@ max_bound = 92
 camera_port = 0
 camera_width = 1280
 camera_height = 720
+
 
 # SETTINGS FOR CAMERA
 
@@ -63,14 +63,13 @@ while True:
 
     # If frame not empty
     if result:
-
         # cv2.imshow(window_title, processor.find_image(frame, templates, files))
 
         # Show borders
-        #cv2.imshow(window_title, processor.find_edges(frame, min_bound, max_bound))
+        cv2.imshow(window_title, processor.find_edges(frame, min_bound, max_bound))
 
         # Show raw frame
-        cv2.imshow(window_title, frame)
+        # cv2.imshow(window_title, frame)
 
     # Escape
     if cv2.waitKey(1) == 27:
