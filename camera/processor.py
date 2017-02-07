@@ -2,8 +2,6 @@
 import cv2
 import numpy
 
-import baxter.utils
-
 red = (0, 0, 255)
 
 

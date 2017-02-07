@@ -1,14 +1,14 @@
 # coding=utf-8
 import cv2
+from camera import processor
 
-from baxter import utils
-from baxter.camera import processor
-
-window_title = 'baxter by D.D.M. v.1.0'
+# Simple camera test for OpenCV
+# D.D.M. 2016(C)
+window_title = "OpenCV camera test by D.D.M."
 param = cv2.cv.CV_CAP_PROP_FPS
 
-# Четкие контуры 88 & 92
-# Шум 36 & 44
+# Best values 88 & 92
+# Noise 36 & 44
 # Middle 128
 min_bound = 88
 max_bound = 92
@@ -16,8 +16,7 @@ camera_port = 0
 camera_width = 1280
 camera_height = 720
 
-
-# ФУНКЦИИ НАСТРОЕК
+# SETTINGS FOR CAMERA
 
 def set_min(value):
     global min_bound
@@ -39,47 +38,44 @@ def set_w(x):
     capture.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, x)
 
 
-# ГЛАВНЫЙ МЕТОД
+# CAPTURE VIDEO
 
 capture = cv2.VideoCapture()
 capture.open(0)
 
 if not capture.isOpened():
-    print 'Error init camera'
+    print "Error camera initialization"
 
 # UI
 cv2.namedWindow(window_title, flags=cv2.WND_PROP_OPENGL)
-# Разрешение
+# Resolution
 # cv2.createTrackbar("Image Width: ", window_title, camera_width, camera_width, set_w)
 # cv2.createTrackbar("Image Height: ", window_title, camera_height, camera_height, set_h)
-# Границы для cv2.canny
+# Borders for cv2.canny
 # cv2.createTrackbar("Min threshold: ", window_title, min_bound, 255, set_min)
 # cv2.createTrackbar("Max threshold: ", window_title, max_bound, 255, set_max)
 
-# Шаблоны
-files, templates = utils.get_templates(".jpg")
-
 while True:
-    # Захват изображения с камеры
+    # Capture frame from camera
     result, frame = capture.read()
-    # Зеркальный разворот камеры по горизонтали
+    # Fix mirror effect on frame
     cv2.flip(frame, 1, frame)
 
-    # Если кадр на пустой
+    # If frame not empty
     if result:
-        # Отображаем результат
-        ms = utils.millis()
 
         # cv2.imshow(window_title, processor.find_image(frame, templates, files))
-        cv2.imshow(window_title, processor.find_edges(frame, min_bound, max_bound))
-        # cv2.imshow(window_title, frame)
-        delta = utils.millis() - ms
-        print "Time delta: %d" % delta
+
+        # Show borders
+        #cv2.imshow(window_title, processor.find_edges(frame, min_bound, max_bound))
+
+        # Show raw frame
+        cv2.imshow(window_title, frame)
 
     # Escape
     if cv2.waitKey(1) == 27:
         break
 
-# Освобождение ресурсов
+# Free all
 capture.release()
 cv2.destroyAllWindows()

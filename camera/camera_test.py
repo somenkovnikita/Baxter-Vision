@@ -6,8 +6,8 @@ from baxter import camera
 # coding=utf-8
 # Здесь можно тестировать любой код
 
-window_title = 'baxter camera Test'
-cam = camera.camera('right_hand_camera', (640, 480))
+window_title = "baxter camera Test"
+cam = camera.camera("right_hand_camera", (640, 480))
 cam.setup_camera()
 capture = cv2.VideoCapture()
 capture.open(0)
