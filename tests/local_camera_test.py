@@ -1,5 +1,7 @@
 import cv2
-from camera import processor
+
+from vision import processor
+from tools import utils
 
 # Simple camera test for OpenCV
 # D.D.M. 2016(C)
@@ -15,6 +17,8 @@ camera_port = 0
 camera_width = 1280
 camera_height = 720
 
+
+# TODO: D.D.M. Rewrite local camera class
 
 # SETTINGS FOR CAMERA
 
@@ -76,7 +80,7 @@ while True:
         # cv2.imshow(window_title, frame)
 
     # Escape
-    if cv2.waitKey(1) == ESCAPE_KEY:
+    if cv2.waitKey(1) == utils.ESCAPE_KEY:
         break
 
 # Free all
