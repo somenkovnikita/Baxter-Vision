@@ -40,8 +40,12 @@ def set_w(x):
 
 # CAPTURE VIDEO
 
+ESCAPE_KEY = 27
+
+CAMERA_ID = 0
+
 capture = cv2.VideoCapture()
-capture.open(0)
+capture.open(CAMERA_ID)
 
 if not capture.isOpened():
     print "Error camera initialization"
@@ -54,8 +58,6 @@ cv2.namedWindow(window_title, flags=cv2.WND_PROP_OPENGL)
 # Borders for cv2.canny
 # cv2.createTrackbar("Min threshold: ", window_title, min_bound, 255, set_min)
 # cv2.createTrackbar("Max threshold: ", window_title, max_bound, 255, set_max)
-
-ESCAPE_KEY = 27
 
 while True:
     # Capture frame from camera
