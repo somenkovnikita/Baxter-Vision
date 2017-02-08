@@ -55,6 +55,8 @@ cv2.namedWindow(window_title, flags=cv2.WND_PROP_OPENGL)
 # cv2.createTrackbar("Min threshold: ", window_title, min_bound, 255, set_min)
 # cv2.createTrackbar("Max threshold: ", window_title, max_bound, 255, set_max)
 
+ESCAPE_KEY = 27
+
 while True:
     # Capture frame from camera
     result, frame = capture.read()
@@ -72,7 +74,7 @@ while True:
         # cv2.imshow(window_title, frame)
 
     # Escape
-    if cv2.waitKey(1) == 27:
+    if cv2.waitKey(1) == ESCAPE_KEY:
         break
 
 # Free all
