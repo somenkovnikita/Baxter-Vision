@@ -2,7 +2,7 @@ import numpy
 import cv2
 from tools import utils
 
-# Image distortion test for OpenCV D.D.M. 2017(c)
+# Image distortion test with OpenCV D.D.M. 2017(c)
 # We can use this script for generate
 # images for neural network
 TEST_NAME = "Image distortion test"
