@@ -8,7 +8,11 @@ from baxter_interface import CameraController
 
 # TODO: Write simple test for Baxter camera with params
 class BaxterCamera:
-    def __init__(self, camera_name, resolution=(960, 600)):
+
+    WIDTH = 960
+    HEIGHT = 600
+
+    def __init__(self, camera_name, resolution=(WIDTH, HEIGHT)):
         self.resolution = resolution
         size = (resolution[1], resolution[0], 3)
         self.cv_image = numpy.zeros(size, numpy.uint8)
@@ -29,18 +33,18 @@ class BaxterCamera:
         self.camera.white_balance_blue = -1
 
         cam_pub = "/cameras/{0}/image".format(self.camera_name)
-        self.publisher = rospy.Subscriber(cam_pub, Image, self._on_got_image)
+        self.publisher = rospy.Subscriber(cam_pub, Image, self.on_recv_image)
 
     def stop(self):
         if self.publisher:
             self.publisher.stop()
 
-    def _on_got_image(self, data):
+    def on_recv_image(self, data):
         try:
             self.cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             pass
-        cv2.waitKey(3)
+        cv2.waitKey(1)
 
     @staticmethod
     def free():
