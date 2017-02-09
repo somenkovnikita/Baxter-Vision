@@ -22,7 +22,7 @@ class LocalCamera:
         self.capture.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
 
         if not self.capture.isOpened():
-            print "Error camera init"
+            print "LocalCamera: Error camera init"
 
     # Read frame from camera
     def read_frame(self):
@@ -43,6 +43,7 @@ class LocalCamera:
     def get_frame(self):
         return self.frame
 
+    # CAMERA PARAMS
     # Set color for frame
     def set_color(self, col):
         self.color = col
