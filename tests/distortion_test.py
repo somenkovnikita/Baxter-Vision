@@ -42,7 +42,6 @@ images = im_distortion(utils.NEURAL_NET_DIR, cv2.COLOR_BGR2GRAY)
 # im_distortion("lab", cv2.COLOR_BGR2LAB)
 # im_distortion("xyz", cv2.COLOR_BGR2XYZ)
 # im_distortion("yuv", cv2.COLOR_BGR2YUV)
-# im_distortion("pers4", cv2.COLOR_BGR2GRAY)
 print TEST_NAME + " >> OK"
 
 while True:
