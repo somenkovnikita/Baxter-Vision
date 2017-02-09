@@ -35,7 +35,7 @@ def im_distortion(folder, color):
     return images_r
 
 
-print TEST_NAME + " >> Init...\n"
+print TEST_NAME + " >> Init..."
 images = im_distortion(utils.NEURAL_NET_DIR, cv2.COLOR_BGR2GRAY)
 # im_distortion("gray", cv2.COLOR_BGR2GRAY)
 # im_distortion("hls", cv2.COLOR_BGR2HLS)
@@ -43,20 +43,20 @@ images = im_distortion(utils.NEURAL_NET_DIR, cv2.COLOR_BGR2GRAY)
 # im_distortion("xyz", cv2.COLOR_BGR2XYZ)
 # im_distortion("yuv", cv2.COLOR_BGR2YUV)
 # im_distortion("pers4", cv2.COLOR_BGR2GRAY)
-print TEST_NAME + " >> OK\n"
+print TEST_NAME + " >> OK"
 
 while True:
 
     i = 0
     for image in images:
-        cv2.imshow(TEST_NAME + "Image # %d\n" % i, image)
+        cv2.imshow(TEST_NAME + "Image # %d" % i, image)
         i += 1
 
     # Escape
     if cv2.waitKey(1) == utils.ESCAPE_KEY:
-        print TEST_NAME + " >> Exit\n"
+        print TEST_NAME + " >> Exit"
         break
 
 # Free all
 cv2.destroyAllWindows()
-print TEST_NAME + " >> Free\n"
+print TEST_NAME + " >> Free"
