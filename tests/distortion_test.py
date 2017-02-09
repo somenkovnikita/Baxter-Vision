@@ -2,18 +2,16 @@ import numpy
 import cv2
 from tools import utils
 
-
-# Images distortion.
+# Image distortion test for OpenCV D.D.M. 2017(c)
 # We can use this script for generate
 # images for neural network
+TEST_NAME = "Image distortion test"
+
 
 def im_distortion(folder, color):
     # Templates
     im_data = utils.read_images(folder)
-    i = 0
-
-    (image, cls) = im_data[0]
-    cv2.imshow("Image distortion test(Image # %d)" % i, image)
+    images_r = []
 
     for item in im_data:
         (image, cls) = item
@@ -32,22 +30,33 @@ def im_distortion(folder, color):
         # result = cv2.warpAffine(im_bw, rot_mat, im_bw.shape, flags=cv2.INTER_LINEAR)
 
         result = cv2.cvtColor(result, color)
+        images_r.append(result)
 
-        cv2.imshow("Image distortion test(Image # %d)" % i, result)
-        i += 1
+    return images_r
 
+
+print TEST_NAME + " >> Init...\n"
+images = im_distortion(utils.NEURAL_NET_DIR, cv2.COLOR_BGR2GRAY)
+# im_distortion("gray", cv2.COLOR_BGR2GRAY)
+# im_distortion("hls", cv2.COLOR_BGR2HLS)
+# im_distortion("lab", cv2.COLOR_BGR2LAB)
+# im_distortion("xyz", cv2.COLOR_BGR2XYZ)
+# im_distortion("yuv", cv2.COLOR_BGR2YUV)
+# im_distortion("pers4", cv2.COLOR_BGR2GRAY)
+print TEST_NAME + " >> OK\n"
 
 while True:
 
-    im_distortion(utils.NEURAL_NET_DIR, cv2.COLOR_BGR2GRAY)
-    # im_distortion("gray", cv2.COLOR_BGR2GRAY)
-    # im_distortion("hls", cv2.COLOR_BGR2HLS)
-    # im_distortion("lab", cv2.COLOR_BGR2LAB)
-    # im_distortion("xyz", cv2.COLOR_BGR2XYZ)
-    # im_distortion("yuv", cv2.COLOR_BGR2YUV)
-    # im_distortion("pers4", cv2.COLOR_BGR2GRAY)
+    i = 0
+    for image in images:
+        cv2.imshow(TEST_NAME + "Image # %d\n" % i, image)
+        i += 1
+
     # Escape
     if cv2.waitKey(1) == utils.ESCAPE_KEY:
+        print TEST_NAME + " >> Exit\n"
         break
 
+# Free all
 cv2.destroyAllWindows()
+print TEST_NAME + " >> Free\n"
