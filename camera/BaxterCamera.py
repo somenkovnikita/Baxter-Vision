@@ -6,7 +6,8 @@ import std_srvs.srv
 from baxter_interface import CameraController
 
 
-class Camera:
+# TODO: Write simple test for Baxter camera with params
+class BaxterCamera:
     def __init__(self, camera_name, resolution=(960, 600)):
         self.resolution = resolution
         size = (resolution[1], resolution[0], 3)
@@ -16,7 +17,7 @@ class Camera:
         self.bridge = CvBridge()
         self.publisher = None
 
-    def get_image(self):
+    def get_frame(self):
         return self.cv_image
 
     def start(self):
@@ -42,7 +43,7 @@ class Camera:
         cv2.waitKey(3)
 
     @staticmethod
-    def _reset_cameras():
+    def free():
         reset_srv = rospy.ServiceProxy("cameras/reset", std_srvs.srv.Empty)
         rospy.wait_for_service("cameras/reset", timeout=10)
         reset_srv()
