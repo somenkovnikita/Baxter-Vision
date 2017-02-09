@@ -1,88 +1,35 @@
 import cv2
-
-from vision import processor
 from tools import utils
+from camera import LocalCamera
 
-# Simple camera test for OpenCV
-# D.D.M. 2016(C)
-window_title = "OpenCV camera test by D.D.M."
+# Simple camera test for OpenCV D.D.M. 2017(c)
+
+TEST_NAME = "OpenCV local camera test"
 param = cv2.cv.CV_CAP_PROP_FPS
 
-# Best values 88 & 92
-# Noise 36 & 44
-# Middle 128
-min_bound = 88
-max_bound = 92
-camera_port = 0
-camera_width = 1280
-camera_height = 720
+print TEST_NAME + " >> Init..."
+local_camera = LocalCamera(0, 640, 480)
+local_camera.set_fps(60)
+#local_camera.set_color(cv2.COLOR_BGR2HLS_FULL)
+print TEST_NAME + " >> OK"
 
-
-# TODO: D.D.M. Rewrite local camera class
-
-# SETTINGS FOR CAMERA
-
-def set_min(value):
-    global min_bound
-    min_bound = value
-    return min_bound
-
-
-def set_max(value):
-    global max_bound
-    max_bound = value
-    return max_bound
-
-
-def set_h(x):
-    capture.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, x)
-
-
-def set_w(x):
-    capture.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, x)
-
-
-# CAPTURE VIDEO
-
-ESCAPE_KEY = 27
-
-CAMERA_ID = 0
-
-capture = cv2.VideoCapture()
-capture.open(CAMERA_ID)
-
-if not capture.isOpened():
-    print "Error camera initialization"
-
-# UI
-cv2.namedWindow(window_title, flags=cv2.WND_PROP_OPENGL)
-# Resolution
-# cv2.createTrackbar("Image Width: ", window_title, camera_width, camera_width, set_w)
-# cv2.createTrackbar("Image Height: ", window_title, camera_height, camera_height, set_h)
-# Borders for cv2.canny
-# cv2.createTrackbar("Min threshold: ", window_title, min_bound, 255, set_min)
-# cv2.createTrackbar("Max threshold: ", window_title, max_bound, 255, set_max)
+cv2.namedWindow(TEST_NAME, flags=cv2.WND_PROP_OPENGL)
 
 while True:
-    # Capture frame from camera
-    result, frame = capture.read()
-    # Fix mirror effect on frame
-    cv2.flip(frame, 1, frame)
 
-    # If frame not empty
-    if result:
-        # cv2.imshow(window_title, processor.find_image(frame, templates, files))
+    # If frame available
+    if local_camera.read_frame():
 
-        # Show borders
-        cv2.imshow(window_title, processor.find_edges(frame, min_bound, max_bound))
-
-        # Show raw frame
-        # cv2.imshow(window_title, frame)
+        # Show frame
+        frame = local_camera.get_frame()
+        cv2.imshow(TEST_NAME, frame)
 
     # Escape
     if cv2.waitKey(1) == utils.ESCAPE_KEY:
+        print TEST_NAME + " >> Exit"
         break
 
 # Free all
-capture.release()
+print TEST_NAME + " >> Free"
+local_camera.free()
 cv2.destroyAllWindows()
