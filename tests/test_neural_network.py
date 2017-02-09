@@ -2,6 +2,7 @@ import numpy, sys
 from tools import utils
 from neural import NeuralNetwork
 
+# Neural network test by somenkovnikita 2017(c)
 
 if __name__ == "__main__":
     if sys.argv[1] is None:

@@ -1,8 +1,8 @@
 import cv2
 import numpy
 
-# D.D.M. 2016(C)
-# Extension for camera
+# D.D.M. 2017(c)
+# Extensions for camera
 
 red = (0, 0, 255)
 
