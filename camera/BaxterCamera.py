@@ -8,7 +8,7 @@ from baxter_interface import CameraController
 
 class BaxterCamera:
     WIDTH = 1280
-    HEIGHT = 80
+    HEIGHT = 800
 
     has_frame = False
 
