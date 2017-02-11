@@ -7,7 +7,7 @@ from camera import BaxterCamera
 TEST_NAME = "OpenCV Baxter camera test"
 
 print TEST_NAME + " >> Init..."
-bax_camera = BaxterCamera(utils.HEAD_BAXTER_CAMERA, (640, 480))
+bax_camera = BaxterCamera(utils.HEAD_BAXTER_CAMERA)
 # local_camera.set_color(cv2.COLOR_BGR2HLS_FULL)
 print TEST_NAME + " >> OK"
 

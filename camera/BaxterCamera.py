@@ -7,12 +7,11 @@ from baxter_interface import CameraController
 
 
 class BaxterCamera:
-    WIDTH = 960
-    HEIGHT = 600
+    WIDTH = 1280
+    HEIGHT = 80
 
     has_frame = False
 
-    # TODO: Write simple test for Baxter camera with params
     def __init__(self, camera_name, resolution=(WIDTH, HEIGHT)):
         self.resolution = resolution
         size = (resolution[1], resolution[0], 3)
@@ -37,6 +36,9 @@ class BaxterCamera:
 
     def set_exposure(self, exposure):
         self.camera.exposure = exposure
+
+    def set_fps(self, fps):
+        self.camera.fps = fps
 
     def set_balance(self, r, g, b):
         self.camera.white_balance_red = r
