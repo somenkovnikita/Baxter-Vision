@@ -17,10 +17,10 @@ class Video_Camera:
             else:
                 return frame
         else:
-            return np.zeros(480, 320)
+            return np.zeros(800, 600)
 
     def save_frame(self, frame, file_name):
-        if cv.waitKey(1) & 0xFF == ord("p"):
+        if cv.waitKey(1) & 0xFF == ord('p'):
             cv.imwrite(file_name, frame)
 
     def undistort_img(self, img, mapx, mapy):   # Look remap_params func in Calibration class
