@@ -40,6 +40,9 @@ class BaxterCamera:
     def set_fps(self, fps):
         self.camera.fps = fps
 
+    def set_window(self, size=(WIDTH, HEIGHT)):
+        self.camera.window = size
+
     def set_balance(self, r, g, b):
         self.camera.white_balance_red = r
         self.camera.white_balance_green = g
