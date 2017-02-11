@@ -2,6 +2,9 @@ import cv2
 import os
 import numpy
 
+LEFT_BAXTER_CAMERA = "left_hand"
+RIGHT_BAXTER_CAMERA = "right_hand"
+HEAD_BAXTER_CAMERA = "head"
 NEURAL_NET_DIR = "../assets/neural/training_set"
 NEURAL_SET_FILE = "../config/training_set.txt"
 RED_COLOR = (0, 0, 255)

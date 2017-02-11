@@ -17,7 +17,7 @@ class BaxterCamera:
         self.resolution = resolution
         size = (resolution[1], resolution[0], 3)
         self.cv_image = numpy.zeros(size, numpy.uint8)
-        self.camera_name = camera_name + "_hand_camera"
+        self.camera_name = camera_name + "_camera"
         self.camera = CameraController(self.camera_name)
         self.camera.resolution = self.resolution
         self.bridge = CvBridge()
