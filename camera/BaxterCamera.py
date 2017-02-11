@@ -7,8 +7,9 @@ from baxter_interface import CameraController
 
 
 class BaxterCamera:
-    WIDTH = 1280
-    HEIGHT = 800
+    # Help: http://sdk.rethinkrobotics.com/wiki/Cameras
+    WIDTH = 640
+    HEIGHT = 400
 
     has_frame = False
 
