@@ -43,7 +43,6 @@ def setup_images(im_data, (width, height)):
 
     for im in im_data:
         (image, fl) = im
-        # FIXME: What's first? Resize || normalization?
         # Resizing(for neural network)
         rs_image = cv2.resize(image, (width, height))
         # Normalization
