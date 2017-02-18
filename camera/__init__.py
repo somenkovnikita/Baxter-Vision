@@ -1,2 +1,2 @@
 from LocalCamera import *
-# from BaxterCamera import *
+from BaxterCamera import *

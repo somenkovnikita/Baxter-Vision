@@ -27,21 +27,22 @@ class Calibration:
 
     def corners(self, frame):               # for each chess board's photo
         ret, corners = cv.findChessboardCorners(frame, (self.columns, self.rows), None)
-        sub_corners = cv.cornerSubPix(frame, corners, (11, 11), (-1, -1), self.criteria)
+        cv.cornerSubPix(frame, corners, (11, 11), (-1, -1), self.criteria)
         self.objpoints.append(self.objp)
-        self.imgpoints.append(sub_corners)
+        self.imgpoints.append(corners)
 
     def calibration(self):   # after using corners func!
         ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(self.objpoints, self.imgpoints,
-                                                          (self.img_width, self.img_height), None, None)
+                                                          (self.img_width, self.img_height))
         newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, imageSize=(self.img_width, self.img_height),
-                                                         alpha=1, newImgSize=(self.img_width, self.img_height))
+                                                         alpha=1, newImgSize=(self.img_width, self.img_height)
+                                                    )
         return mtx, dist, newcameramtx, roi
 
     def remap_params(self, mtx, dist, newcameramtx):    # return two values to undistort image
         mapx, mapy = cv.initUndistortRectifyMap(mtx, dist, None, newcameramtx,
                                                 (self.img_width, self.img_height), 5)
-        return mapx, mapy   # Use numpy.save to save this and nampy.load to load
+        return mapx, mapy   # Use numpy.save to save this and numpy.load to load
 
     def undist(self, frame, mtx, dist, newcameramtx):
         img = cv.undistort(frame, mtx, dist, None, newcameramtx)
