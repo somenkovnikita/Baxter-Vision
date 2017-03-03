@@ -1,9 +1,12 @@
 How setup and start Baxter
 
 * Краткий мануал по запуску:
-Подсоединить Клаву
-Запустить через кнопку на жопе
-Нажимать Alt+F, F пока не появиться окно консоли с выбором запуска
+
+* Подсоединить Клаву
+
+* Запустить через кнопку на сзади
+
+* Нажимать Alt+F, F пока не появиться окно консоли с выбором запуска
 
 * Applications -> RSDK GUI
 
@@ -15,7 +18,7 @@ How setup and start Baxter
 
 * Выполнить настройку окружения командой ./baxter.sh
 
-* rosrun -baxter_tools robot_enable.py -e
+* rosrun -baxter_tools enable_robot.py -e
 
 * Дальше свои скрипты python my_script.py
 
