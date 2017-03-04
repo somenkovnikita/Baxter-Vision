@@ -1,7 +1,8 @@
 import cv2 as cv
 import numpy as np
-from camera import BaxterCamera
 import rospy
+
+from src.camera import BaxterCamera
 
 rospy.init_node('calib')
 

@@ -1,2 +1,0 @@
-from ImagesFinder import *
-

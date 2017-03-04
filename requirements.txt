@@ -1,4 +1,1 @@
-# Issue: Using opencv-python create problems in Mac OSX projects
 numpy
-# rosdep
-# cmake

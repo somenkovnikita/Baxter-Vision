@@ -5,5 +5,4 @@ def start_controller():
 
 
 if __name__ == "__main__":
-    # TODO: parse args
     start_controller()

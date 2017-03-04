@@ -1,8 +1,9 @@
-from calibration.Calibration import Calibration
-import numpy as np
-import cv2 as cv
 from glob import glob
 
+import cv2 as cv
+import numpy as np
+
+from calibration import Calibration
 
 corners_params = Calibration(9, 6, 640, 400)
 images = glob('*.png')
