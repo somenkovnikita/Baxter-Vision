@@ -8,16 +8,18 @@ rospy.init_node('calib')
 
 video_stream = BaxterCamera('left_hand')
 
-mapx = np.load('mapx.npy')
-mapy = np.load('mapy.npy')
+undist_options = np.load('undist_options.npz')
 
-x = np.load('x.npy')
-y = np.load('y.npy')
-w = np.load('w.npy')
-h = np.load('h.npy')
-dist = np.load('dist.npy')
-newcameramtx = np.load('newcameramtx.npy')
-mtx = np.load('mtx.npy')
+mapx = undist_options['mapx']
+mapy = undist_options['mapy']
+x = undist_options['x']
+y = undist_options['y']
+w = undist_options['w']
+h = undist_options['h']
+dist = undist_options['dist']
+newcameramtx = undist_options['newcameramtx']
+mtx = undist_options['mtx']
+
 p = False
 while True:
     frame = video_stream.get_frame()

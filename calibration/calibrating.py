@@ -19,12 +19,6 @@ mtx, dist, newcameramtx, roi = corners_params.calibration()
 x, y, w, h = roi
 mapx, mapy = corners_params.remap_params(mtx, dist, newcameramtx)
 
-np.save('x.npy', x)
-np.save('y.npy', y)
-np.save('w.npy', w)
-np.save('h.npy', h)
-np.save('mapx.npy', mapx)
-np.save('mapy.npy', mapy)
-np.save('dist.npy', dist)
-np.save('newcameramtx.npy', newcameramtx)
-np.save('mtx.npy', mtx)
+np.savez('undist_options', x=x, y=y, w=w, h=h,
+         mapx=mapx, mapy=mapy, dist=dist,
+         newcameramtx=newcameramtx, mtx=mtx)
