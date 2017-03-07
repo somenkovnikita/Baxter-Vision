@@ -3,7 +3,9 @@ import importlib
 
 import cv2
 
-"""Very useful for testing"""
+"""
+Subsystem for run yours module for work with camera
+"""
 
 
 def parse_baxter_camera(camera_name):
@@ -44,6 +46,7 @@ if __name__ == '__main__':
             choices=['local', 'baxter_left', 'baxter_right', 'baxter_head'])
     parser.add_argument('-m', '--module', help='Module name for search function', default=None)
     parser.add_argument('-f', '--func', help='Function(callback) to run', default=simple_show)
+    parser.add_argument('-C', '--config', help='Config file for run odule', default=None)
 
     args = parser.parse_args()
     camera = get_camera(args.camera)
@@ -51,5 +54,6 @@ if __name__ == '__main__':
     if args.module is not None:
         aim_module = importlib.import_module(args.module)
         aim_func = getattr(aim_module, args.func)
+        aim_module.init(args.config)
 
     run(camera, aim_func)
