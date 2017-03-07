@@ -9,30 +9,30 @@ def calibration(chess_size, images, image_size):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     objp = np.zeros((chess_cols * chess_rows, 3), np.float32)
     objp[:, :2] = np.mgrid[0:chess_cols, 0:chess_rows].T.reshape(-1, 2)
-    objpoints, imgpoints = list(), list()
+    obj_points, img_points = list(), list()
 
     for image in images:
         ret, corners = cv2.findChessboardCorners(image, chess_size, None)
         cv2.cornerSubPix(image, corners, (11, 11), (-1, -1), criteria)
 
-        objpoints.append(objp)
-        imgpoints.append(corners)
+        obj_points.append(objp)
+        img_points.append(corners)
 
-    ret, mtx, dist, rvecs, tvecs = \
-        cv2.calibrateCamera(objpoints, imgpoints, image_size)
+    ret, mtx, dist, r_vec, t_vec = \
+        cv2.calibrateCamera(obj_points, img_points, image_size)
 
-    newcameramtx, roi = cv2.getOptimalNewCameraMatrix(
+    new_camera_mtx, roi = cv2.getOptimalNewCameraMatrix(
         mtx, dist, imageSize=image_size, alpha=1, newImgSize=image_size)
 
-    return mtx, newcameramtx, dist, roi
+    return mtx, new_camera_mtx, dist, roi
 
 
 def save_params(filename, params):
-    mtx, newcameramtx, dist, roi = params
+    mtx, new_camera_mtx, dist, roi = params
     x, y, w, h = roi
 
     np.savez(filename, x=x, y=y, w=w, h=h, dist=dist,
-             newcameramtx=newcameramtx, mtx=mtx)
+             new_camera_mtx=new_camera_mtx, mtx=mtx)
 
 
 def read_images(filename):
@@ -40,7 +40,7 @@ def read_images(filename):
 
     with open(filename) as paths:
         for path in paths:
-            image = cv2.imread(path)
+            image = cv2.imread(path.strip())
             # TODO: see docs for read as gray image
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             images.append(gray)
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     images = read_images(args.images_file)
-    if images:
+    if not images:
         print 'File not contain paths!'
         exit(-1)
 
@@ -71,5 +71,7 @@ if __name__ == '__main__':
     chess_rows = int(chess_rows)
     chess_size = (chess_rows, chess_cols)
 
+    print 'Calibrating...',
     params = calibration(chess_size, images, image_size)
     save_params(args.output_params, params)
+    print 'Done!'
