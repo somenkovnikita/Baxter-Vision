@@ -7,9 +7,10 @@ import PIL.Image
 from io import BytesIO
 from IPython.display import Image, display
 
+
 # https://www.tensorflow.org/tutorials/mandelbrot
 
-def DisplayFractal(a, fmt="jpeg"):
+def display_fractal(a, fmt="jpeg"):
     """Display an array of iteration counts as a
      colorful picture of a fractal."""
     a_cyclic = (6.28 * a / 20.0).reshape(list(a.shape) + [1])
@@ -53,4 +54,4 @@ step = tf.group(
 )
 
 for i in range(200): step.run()
-DisplayFractal(ns.eval())
+display_fractal(ns.eval())
