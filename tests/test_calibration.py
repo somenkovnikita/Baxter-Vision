@@ -29,6 +29,8 @@ class Calibration:
                 self.imgpoints.append(corners)
             else:
                 print("Can't find corners in photo.")
+                # TODO: Print filename.
+
 
     def comput_params(self):
         """ Compute distortion options. """
