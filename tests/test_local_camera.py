@@ -1,6 +1,6 @@
 import cv2
 from tools import utils
-from camera import LocalCamera
+from tools import LocalCamera
 
 # Local web camera test by D.D.M. 2017(c)
 

@@ -1,6 +1,6 @@
 import cv2
 from tools import utils
-from camera import BaxterCamera
+from baxter import BaxterCamera
 
 # Baxter camera test by D.D.M. 2017(c)
 
