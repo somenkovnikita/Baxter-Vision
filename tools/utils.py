@@ -11,8 +11,6 @@ RED_COLOR = (0, 0, 255)
 ESCAPE_KEY = 27
 
 
-# D.D.M. 2017(c)
-
 # Reading images from folder
 def read_images(folder):
     # type: (str) -> list(tuple)

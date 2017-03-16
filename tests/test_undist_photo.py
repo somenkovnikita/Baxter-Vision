@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import rospy
 from tools import utils
-from camera import BaxterCamera
+from baxter import BaxterCamera
 
 # OpenCV Baxter make photos test by Ivan. 2017(c)
 

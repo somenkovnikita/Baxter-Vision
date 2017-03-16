@@ -1,7 +1,8 @@
-# Local camera class D.D.M. 2017(c)
 import cv2
 
 
+# Local camera class D.D.M. 2017(c)
+# Capture image from web camera with OpenCV
 class LocalCamera:
     CAMERA_ID = 0
     WIDTH = 640
