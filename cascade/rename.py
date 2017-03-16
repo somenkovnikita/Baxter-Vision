@@ -6,7 +6,7 @@ import os
 import cv2
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--in_dir", type=str, default='.',
+parser.add_argument("-i", "--in_dir", type=str, default=".",
                     help="Input dir for images")
 
 parser.add_argument("-o", "--out_dir", type=str, default=None,
@@ -15,7 +15,7 @@ parser.add_argument("-o", "--out_dir", type=str, default=None,
 parser.add_argument("-s", "--resize", type=str, default=None)
 
 args = parser.parse_args()
-in_base = os.path.join(args.in_dir, '*')
+in_base = os.path.join(args.in_dir, "*")
 if args.out_dir is None:
     args.out_dir = args.in_dir
 count = 0
@@ -26,7 +26,7 @@ for fn in files:
         img = cv2.imread(fn)
         os.remove(fn)
         while True:
-            img_name = os.path.join(args.out_dir, str(count) + '.jpg')
+            img_name = os.path.join(args.out_dir, str(count) + ".jpg")
             if not os.path.exists(img_name):
                 break
             count += 1

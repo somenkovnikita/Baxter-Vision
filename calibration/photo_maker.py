@@ -6,7 +6,7 @@ import cv2
 """Module for real_time.py script for make dataset for calibration"""
 
 
-basedir = ''
+basedir = ""
 photo_num = 0
 chess_rows = 9
 chess_cols = 6
@@ -19,12 +19,12 @@ def init(ini_config_fn):
     parser = ConfigParser.ConfigParser()
     parser.read(ini_config_fn)
 
-    if parser.has_section('common'):
-        chess_rows = int(parser.get('common', 'chess_rows'))
-        chess_cols = int(parser.get('common', 'chess_cols'))
+    if parser.has_section("common"):
+        chess_rows = int(parser.get("common", "chess_rows"))
+        chess_cols = int(parser.get("common", "chess_cols"))
         chess_size = (chess_rows, chess_cols)
 
-    basedir = parser.get('photo_maker', 'output_dir')
+    basedir = parser.get("photo_maker", "output_dir")
 
     if not os.path.exists(basedir):
         os.mkdir(basedir)
@@ -39,11 +39,11 @@ def maker(frame):
     ret, corners = cv2.findChessboardCorners(gray, chess_size, None)
     cv2.drawChessboardCorners(frame_chess, chess_size, corners, ret)
 
-    cv2.imshow('calibration::photo_maker', frame_chess)
+    cv2.imshow("calibration::photo_maker", frame_chess)
 
-    if cv2.waitKey(10) & 0xFF == ord('s') and ret:
-        image_fn = str(photo_num) + '.jpg'
+    if cv2.waitKey(10) & 0xFF == ord("s") and ret:
+        image_fn = str(photo_num) + ".jpg"
         path = os.path.join(basedir, image_fn)
         cv2.imwrite(path, frame)
-        print 'Save new photo:', path
+        print "Save new photo:", path
         photo_num += 1

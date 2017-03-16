@@ -45,8 +45,8 @@ class LimbMover:
 
     def _get_current_pose(self):
         quaternion_pose = self.limb_interface.endpoint_pose()
-        position = quaternion_pose['position']
-        quaternion = quaternion_pose['orientation']
+        position = quaternion_pose["position"]
+        quaternion = quaternion_pose["orientation"]
         euler = tf.transformations.euler_from_quaternion(quaternion)
 
         return [position[0], position[1], position[2], euler[0], euler[1], euler[2]]
@@ -54,9 +54,9 @@ class LimbMover:
     @staticmethod
     def _print_pose(rpy_pose, position, euler):
         print "             request   actual"
-        print 'front back = %5.4f ' % rpy_pose[0], "%5.4f" % position[0]
-        print 'left right = %5.4f ' % rpy_pose[1], "%5.4f" % position[1]
-        print 'up down    = %5.4f ' % rpy_pose[2], "%5.4f" % position[2]
-        print 'roll       = %5.4f ' % rpy_pose[3], "%5.4f" % euler[0]
-        print 'pitch      = %5.4f ' % rpy_pose[4], "%5.4f" % euler[1]
-        print 'yaw        = %5.4f ' % rpy_pose[5], "%5.4f" % euler[2]
+        print "front back = %5.4f " % rpy_pose[0], "%5.4f" % position[0]
+        print "left right = %5.4f " % rpy_pose[1], "%5.4f" % position[1]
+        print "up down    = %5.4f " % rpy_pose[2], "%5.4f" % position[2]
+        print "roll       = %5.4f " % rpy_pose[3], "%5.4f" % euler[0]
+        print "pitch      = %5.4f " % rpy_pose[4], "%5.4f" % euler[1]
+        print "yaw        = %5.4f " % rpy_pose[5], "%5.4f" % euler[2]

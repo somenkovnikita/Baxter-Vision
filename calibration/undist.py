@@ -12,7 +12,7 @@ def init(config):
 
     parser = ConfigParser.ConfigParser()
     parser.read(config)
-    fn = parser.get('undist', 'input_params')
+    fn = parser.get("undist", "input_params")
 
     calibrator = Calibrator.Calibrator(fn)
 
@@ -22,5 +22,5 @@ def undist(frame):
 
     dst = calibrator.calibrate(frame)
 
-    cv2.imshow('Original', frame)
-    cv2.imshow('Undistortion', dst)
+    cv2.imshow("Original", frame)
+    cv2.imshow("Undistortion", dst)

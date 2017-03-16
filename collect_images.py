@@ -11,15 +11,15 @@ def collect_images(basedir):
 
 
 def save_images_list(filename, images_list):
-    with open(filename, 'w') as out:
-        out_str = '\n'.join(images_list)
+    with open(filename, "w") as out:
+        out_str = "\n".join(images_list)
         out.write(out_str)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Collect images in dir')
-    parser.add_argument('-i', '--input_dir', help='Input dir with images', required=True)
-    parser.add_argument('-o', '--output_file', help='Output file with images paths', required=True)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Collect images in dir")
+    parser.add_argument("-i", "--input_dir", help="Input dir with images", required=True)
+    parser.add_argument("-o", "--output_file", help="Output file with images paths", required=True)
 
     args = parser.parse_args()
     image_paths = collect_images(args.input_dir)

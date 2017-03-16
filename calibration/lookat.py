@@ -30,14 +30,14 @@ def mouse_callback(event, x, y, flags, param):
 def init(config):
     global mover,x ,y, cascade
 
-    cv2.namedWindow('Aim')
-    cv2.setMouseCallback('Aim', mouse_callback)
+    cv2.namedWindow("Aim")
+    cv2.setMouseCallback("Aim", mouse_callback)
 
     cascade = cv2.CascadeClassifier()
     if cascade.load(config):
-        print 'Load cascade success'
+        print "Load cascade success"
 
-    mover = LimbMover.LimbMover('left')
+    mover = LimbMover.LimbMover("left")
 
     pass
 
@@ -69,19 +69,19 @@ def lookat(frame):
     global mover, x, dc, y, lookAt, x_px, y_px
 
     key = cv2.waitKey(10) & 0xff
-    if key == ord('w'):
+    if key == ord("w"):
         x += dc
-        print 'x =', x
-    elif key == ord('s'):
+        print "x =", x
+    elif key == ord("s"):
         x -= dc
-        print 'x =', x
-    elif key == ord('d'):
+        print "x =", x
+    elif key == ord("d"):
         y -= dc
-        print 'y =', y
-    elif key == ord('a'):
+        print "y =", y
+    elif key == ord("a"):
         y += dc
-        print 'y =', y
-    elif key == ord('t'):
+        print "y =", y
+    elif key == ord("t"):
         mover.move([0.5, 0.0, 0.1, -3.14, 0.0, 0.0], move=True)
     elif lookAt:
         h, w = cframe.shape[:2]
@@ -99,7 +99,7 @@ def lookat(frame):
         cubes = cascade.detectMultiScale(cframe)
         h, w = cframe.shape[:2]
         if len(cubes) > 0:
-            print 'Found ', len(cubes), 'rects'
+            print "Found ", len(cubes), "rects"
 
             y_px = cubes[0][3] / 2 + cubes[0][1]
             x_px = cubes[0][2] / 2 + cubes[0][0]
@@ -119,7 +119,7 @@ def lookat(frame):
             rect = x + w, y + h
             cv2.rectangle(cframe, p, rect, (255, 255, 255), 2)
 
-    cv2.imshow('Aim', cframe)
+    cv2.imshow("Aim", cframe)
     cv2.waitKey(100)
 
 

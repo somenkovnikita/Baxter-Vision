@@ -48,30 +48,30 @@ def read_images(filename):
     return images
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-i', '--images_file', required=True,
-                        help='File with image path collect with collect_images.py')
-    parser.add_argument('-o', '--output_params', default='config/undist.npz',
-                        help='Output file with undistortion params')
-    parser.add_argument('-s', '--chess_size', default='9x6',
-                        help='Chess rows and cols in format RxC (9x6 by default)')
+    parser.add_argument("-i", "--images_file", required=True,
+                        help="File with image path collect with collect_images.py")
+    parser.add_argument("-o", "--output_params", default="config/undist.npz",
+                        help="Output file with undistortion params")
+    parser.add_argument("-s", "--chess_size", default="9x6",
+                        help="Chess rows and cols in format RxC (9x6 by default)")
 
     args = parser.parse_args()
 
     images = read_images(args.images_file)
     if not images:
-        print 'File not contain paths!'
+        print "File not contain paths!"
         exit(-1)
 
     image_size = images[0].shape[:2]
-    chess_rows, chess_cols = args.chess_size.split('x')
+    chess_rows, chess_cols = args.chess_size.split("x")
     chess_cols = int(chess_cols)
     chess_rows = int(chess_rows)
     chess_size = (chess_rows, chess_cols)
 
-    print 'Calibrating...',
+    print "Calibrating...",
     params = calibration(chess_size, images, image_size)
     save_params(args.output_params, params)
-    print 'Done!'
+    print "Done!"
