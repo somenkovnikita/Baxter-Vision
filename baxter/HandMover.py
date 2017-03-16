@@ -7,19 +7,19 @@ import rospy
 import baxter_interface
 
 
-class LimbMover:
+class HandMover:
+
     def __init__(self, limb):
         self.limb = limb
         self.limb_interface = baxter_interface.Limb(limb)
         self.pose = self._get_current_pose()
 
-    def move(self, rpy_pose, print_debug=False, move=False):
+    def move(self, rpy_pose, move=False):
         quaternion_pose = conversions.list_to_pose_stamped(rpy_pose, "base")
 
         node = "ExternalTools/" + self.limb + "/PositionKinematicsNode/IKService"
         ik_service = rospy.ServiceProxy(node, SolvePositionIK)
         ik_request = SolvePositionIKRequest()
-        hdr = Header(stamp=rospy.Time.now(), frame_id="base")
 
         ik_request.pose_stamp.append(quaternion_pose)
         try:
@@ -28,7 +28,7 @@ class LimbMover:
         except (rospy.ServiceException, rospy.ROSException), error_message:
             rospy.logerr("Service request failed: %r" % (error_message,))
             return False
-        if (ik_response.isValid[0]):
+        if ik_response.isValid[0]:
             limb_joints = dict(zip(ik_response.joints[0].name, ik_response.joints[0].position))
             if move:
                 self.limb_interface.move_to_joint_positions(limb_joints)
@@ -38,10 +38,6 @@ class LimbMover:
 
         else:
             return False
-
-        self.pose = self._get_current_pose()
-        if print_debug:
-            self._print_pose(rpy_pose, self.pose[:3], self.pose[3:])
 
     def _get_current_pose(self):
         quaternion_pose = self.limb_interface.endpoint_pose()

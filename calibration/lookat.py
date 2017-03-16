@@ -1,5 +1,5 @@
 import cv2
-from baxter import LimbMover
+from baxter import HandMover
 
 mover = None
 
@@ -37,7 +37,7 @@ def init(config):
     if cascade.load(config):
         print "Load cascade success"
 
-    mover = LimbMover.LimbMover("left")
+    mover = HandMover.HandMover("left")
 
     pass
 
