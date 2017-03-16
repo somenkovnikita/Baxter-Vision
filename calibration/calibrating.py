@@ -40,10 +40,9 @@ def read_images(filename):
 
     with open(filename) as paths:
         for path in paths:
-            image = cv2.imread(path.strip())
-            # TODO: see docs for read as gray image
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            images.append(gray)
+            # TODO: Read docs to load gray image.
+            image = cv2.imread(path.strip(), flags=0)  # Flag 0 makes image in grayscale!
+            images.append(image)
 
     return images
 
