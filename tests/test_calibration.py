@@ -1,6 +1,7 @@
 # Calibration test for Baxter by Ivan 2017(c)
 import cv2
 import numpy as np
+from tools import LocalCamera
 
 TEST_NAME = "Camera calibration test for Baxter"
 
@@ -18,6 +19,10 @@ class Calibration:
         self.objp[:, :2] = np.mgrid[0:chess_board_size[0], 0:chess_board_size[1]].T.reshape(-1, 2)
         self.img_size = None
 
+    def __str__(self):
+        rep = "Class to compute undistortion options for Baxter's camera."
+        return rep
+
     def collect_data(self, images):
         """ Collect object points and image points to calibrating. """
         for img in images:
@@ -30,7 +35,6 @@ class Calibration:
             else:
                 print("Can't find corners in photo.")
                 # TODO: Print filename.
-
 
     def comput_params(self):
         """ Compute distortion options. """
@@ -59,7 +63,50 @@ class Calibration:
         return images
 
 
-if __name__ == '__main__':
+class CalibratePhoto:
+
+    """ Use this class to make chessboard photo to calibrate camera. """
+
+    def __init__(self, camera_name, camera_resolution=(640, 400), chessboard_size=(6, 9)):
+        self.camera_name = camera_name + "_camera"
+        self.resolution = camera_resolution
+        self.basedir = ""  # Path to dir for calibrate photos.
+        self.board_size = chessboard_size  # Number of rows an columns.
+        self.photo_num = 1
+
+    def __str__(self):
+        rep = 'Makes data set of 30 photos to using calibration class.'
+        return rep
+
+    def photo_maker(self):
+        """ Main func witch makes 30 chessboard photos.
+         Press s_key to save frame.
+         Press ESC to stop."""
+        camera = LocalCamera.LocalCamera(self.camera_name, self.resolution)
+        while self.photo_num <= 30:
+            image = camera.get_frame()
+            ret_corners, corners = cv2.findChessboardCorners(image, self.board_size)
+            cv2.imshow('photo maker', image)  # If there are not corners video will be freezing.
+            if cv2.waitKey(1) & 0xFF == ord('s'):  # Press s key to save frame.
+                if ret_corners:  # If corners were found.
+                    cv2.imwrite(self.basedir+'/' + str(self.photo_num) + '.png', image)
+                    cv2.drawChessboardCorners(image, self.board_size, corners, ret_corners)
+                    cv2.imshow('Saved!', image)  # Show saved frame with drawn corners and close it.
+                    cv2.waitKey(500)
+                    cv2.destroyWindow('Saved!')
+                    print(str(30 - self.photo_num)+'frames left!')
+                    self.photo_num += 1
+                else:
+                    print("Corners weren't found!")
+            elif cv2.waitKey(1) & 0xFF == 27:  # Press ESC to escape.
+                print("Exit")
+                break
+
+        if self.photo_num == 30:
+            print('You have enough photos!!!')
+
+
+def calibrate():
     calibrator = Calibration()
     images = calibrator.read_images('')
     # TODO: ask Nikita about open(filename) sa path =)
@@ -67,4 +114,7 @@ if __name__ == '__main__':
     params = calibrator.comput_params()
     calibrator.save_params('params', params)
 
+def calib_photos():
+    photomaker = CalibratePhoto('left')
+    photomaker.photo_maker()
 
