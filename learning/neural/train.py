@@ -5,11 +5,6 @@ from time import strftime, gmtime
 """
 Format line in file with marked images:
 <path-to-image> <class>
-...
-Ex:
-
-cube.png    1
-cube2.png   2
 """
 
 
