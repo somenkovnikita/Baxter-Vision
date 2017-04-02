@@ -4,6 +4,9 @@ from os import listdir
 from os.path import isfile, join, abspath
 
 
+"""Collect all image filename in file *.list"""
+
+
 def collect_images(basedir):
     full_path = abspath(basedir)
     all_files = (join(full_path, fn) for fn in listdir(basedir))

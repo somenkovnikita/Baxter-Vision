@@ -1,7 +1,5 @@
-
-
 def start_controller():
-    pass
+    raise Exception('Not working(')
 
 
 if __name__ == "__main__":

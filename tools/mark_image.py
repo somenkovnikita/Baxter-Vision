@@ -1,19 +1,17 @@
 import argparse
 import codecs
-from glob import glob
-from imghdr import what
 from os.path import join, basename
 
 import cv2
 
+from collect_images import collect_images
+
 """Script for mark image for generate *.list files"""
 
 
-def mark_images(base_dir):
+def mark_images(basedir):
     results = list()
-    for filename in glob(join(base_dir, '*')):
-        if what(filename) is None:
-            continue
+    for filename in collect_images(basedir):
         image = cv2.imread(filename)
         resized = cv2.resize(image, (100, 100))
         cv2.imshow('Mark', resized)

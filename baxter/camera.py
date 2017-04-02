@@ -31,7 +31,7 @@ class Camera:
 
     def get_frame(self):
         if self.calibrator:
-            return self.calibrator(self.cv_image)
+            return self.calibrator.calibrate(self.cv_image)
         return self.cv_image
 
     # CAMERA PARAMS
