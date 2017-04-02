@@ -1,47 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import abc
 
 import cv2
-import numpy as np
+
+from interface import ILetterRecognizer
 
 
-class ILetterRecognize:
-    """Interface for letter recognize"""
-
-    training_set = list()
-
-    @abc.abstractmethod
-    def letter(self, image):
-        # type: (ILetterRecognize, np.array) -> chr
-        """Recognize letter on image"""
-        raise NotImplementedError('LetterRecognize.letter')
-
-    @abc.abstractmethod
-    def letters(self, images):
-        # type: (ILetterRecognize, list(np.array)) -> list
-        """Recognize letters on images. This method may be faster than:
-            for img in images: LetterRecognize.letter(img)"""
-        raise NotImplementedError('LetterRecognize.letters')
-
-    @staticmethod
-    def setup_letters(filename):
-        # type: (str) -> None
-        """Initialize training set from file in format:
-            <image-path> <letter/class>
-        """
-        ts = ILetterRecognize.training_set
-        with open(filename) as letters:
-            for line in letters:
-                image_path, letter = line.split()
-                image = cv2.imread(image_path)
-                element = image, letter.strip()
-                ts.append(element)
-
-    __metaclass__ = abc.ABCMeta
-
-
-class TemplateLetterRecognize(ILetterRecognize):
+class TemplateLetterRecognizer(ILetterRecognizer):
     default_width, default_height = 50, 50
     default_size = (default_width, default_height)
     default_method = cv2.CV_TM_CCORR_NORMED
@@ -80,7 +45,7 @@ class TemplateLetterRecognize(ILetterRecognize):
 
     def _collect_unique_templates(self):
         unique_letter = set()
-        training_set = ILetterRecognize.training_set
+        training_set = ILetterRecognizer.training_set
         for template, letter in training_set:
             if letter in unique_letter:
                 continue
