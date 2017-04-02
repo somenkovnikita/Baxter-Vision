@@ -1,10 +1,9 @@
-from moveit_commander import conversions
-from baxter_core_msgs.srv import ( SolvePositionIK,
-                                   SolvePositionIKRequest )
-from std_msgs.msg import Header
-import tf
-import rospy
 import baxter_interface
+import rospy
+import tf
+from baxter_core_msgs.srv import (SolvePositionIK,
+                                  SolvePositionIKRequest)
+from moveit_commander import conversions
 
 
 class HandMover:

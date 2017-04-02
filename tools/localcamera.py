@@ -13,11 +13,11 @@ class LocalCamera:
     result = None
     color = -1
 
-    def __init__(self, cam_id=CAMERA_ID, resolution=(WIDTH, HEIGHT)):
+    def __init__(self, cam_id=CAMERA_ID, localcamera=(WIDTH, HEIGHT)):
         self.capture = cv2.VideoCapture()
         self.capture.open(cam_id)
         # Set params for camera
-        (width, height) = resolution
+        (width, height) = localcamera
         self.capture.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, height)
         self.capture.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
 

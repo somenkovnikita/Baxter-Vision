@@ -20,7 +20,7 @@ def get_camera(camera_name):
         init_node("real_time_camera")
         return BaxterCamera.Camera(parse_baxter_camera(camera_name))
     else:
-        from tools.LocalCamera import LocalCamera
+        from tools.localcamera import LocalCamera
         return LocalCamera()
 
 
@@ -43,7 +43,7 @@ def run(cam, callback):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Apply function for real time camera")
     parser.add_argument("-c", "--camera", help="Camera type", default="local",
-            choices=["local", "baxter_left", "baxter_right", "baxter_head"])
+                        choices=["local", "baxter_left", "baxter_right", "baxter_head"])
     parser.add_argument("-m", "--module", help="Module name for search function", default=None)
     parser.add_argument("-f", "--func", help="Function(callback) to run", default=simple_show)
     parser.add_argument("-C", "--config", help="Config file for run module", default=None)
