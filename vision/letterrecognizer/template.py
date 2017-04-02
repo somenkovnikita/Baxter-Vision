@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import cv2
 
 from interface import ILetterRecognizer
@@ -14,32 +13,33 @@ class TemplateLetterRecognizer(ILetterRecognizer):
 
     def __init__(self, size=default_size, method=default_method, threshold=default_threshold):
         # TODO: try for different parameters value in diploma
-        self.size = size
-        self.method = method
-        self.threshold = threshold
-        self.templates = list()
-        self.classes = list()
+        self._size = size
+        self._method = method
+        self._threshold = threshold
+        self._templates = list()
+        self._classes = list()
         self._collect_unique_templates()
 
     def letter(self, image):
         candidates = list()
-        for i, template in enumerate(self.templates):
-            match = self._math_template(image, template)
+        resized = cv2.resize(image, self._size)
+        for i, template in enumerate(self._templates):
+            match = self._math_template(resized, template)
             max_val = max(match)
-            if max_val >= self.threshold:
+            if max_val >= self._threshold:
                 candidates.append((i, max_val))
         idx = max(candidates, key=lambda x: x[1])[0]
-        return self.classes[idx]
+        return self._classes[idx]
 
     def letters(self, images):
         return [self.letter(img) for img in images]
 
     def _math_template(self, image, template):
-        args = image, template, self.method
+        args = image, template, self._method
         match = cv2.matchTemplate(*args)
         min_max = cv2.minMaxLoc(match)
         min_val, max_val = min_max[:2]
-        if self.method == cv2.TM_SQDIFF_NORMED:
+        if self._method == cv2.TM_SQDIFF_NORMED:
             return 1.0 - min_val
         return max_val
 
@@ -49,6 +49,6 @@ class TemplateLetterRecognizer(ILetterRecognizer):
         for template, letter in training_set:
             if letter in unique_letter:
                 continue
-            resized = cv2.resize(template, self.size)
-            self.templates.append(resized)
-            self.classes.append(letter)
+            resized = cv2.resize(template, self._size)
+            self._templates.append(resized)
+            self._classes.append(letter)

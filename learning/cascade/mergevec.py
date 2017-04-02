@@ -78,14 +78,14 @@ def merge_vec_files(vec_directory, output_vec_file):
     The format of a .vec file is:
 
     4 bytes denoting number of total images (int)
-    4 bytes denoting size of images (int)
+    4 bytes denoting _size of images (int)
     2 bytes denoting min value (short)
     2 bytes denoting max value (short)
 
     ex: 	6400 0000 4605 0000 0000 0000
 
         hex		6400 0000  	4605 0000 		0000 		0000
-                   # images  	size of h * w		min		max
+                   # images  	_size of h * w		min		max
         dec	    	100     	1350			0 		0
 
     :type vec_directory: string
@@ -134,8 +134,8 @@ def merge_vec_files(vec_directory, output_vec_file):
                 num_images = val[0]
                 image_size = val[1]
                 if image_size != prev_image_size:
-                    err_msg = """The image sizes in the .vec files differ. These values must be the same. \n The image size of file {0}: {1}\n
-						The image size of previous files: {0}""".format(f, image_size, prev_image_size)
+                    err_msg = """The image sizes in the .vec files differ. These values must be the same. \n The image _size of file {0}: {1}\n
+						The image _size of previous files: {0}""".format(f, image_size, prev_image_size)
                     sys.exit(err_msg)
 
                 total_num_images += num_images

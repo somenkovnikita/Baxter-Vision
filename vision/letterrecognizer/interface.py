@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
+import cv2
+
 
 class ILetterRecognizer:
     """Interface for letter recognize"""
@@ -15,7 +17,7 @@ class ILetterRecognizer:
     @abstractmethod
     def letters(self, images):
         # type: (ILetterRecognizer, list(np.array)) -> list
-        """Recognize letters on images. This method may be faster than:
+        """Recognize letters on images. This _method may be faster than:
             for img in images: LetterRecognize.letter(img)"""
         raise NotImplementedError('LetterRecognize.letters')
 
@@ -34,4 +36,3 @@ class ILetterRecognizer:
                 ts.append(element)
 
     __metaclass__ = ABCMeta
-
