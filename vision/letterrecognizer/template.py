@@ -6,10 +6,16 @@ from interface import ILetterRecognizer
 
 
 class TemplateLetterRecognizer(ILetterRecognizer):
-    default_width, default_height = 50, 50
+    default_width, default_height = 25, 25
     default_size = (default_width, default_height)
-    default_method = cv2.cv.CV_TM_CCORR_NORMED
-    default_threshold = 0.8
+    default_method = cv2.cv.CV_TM_SQDIFF_NORMED
+    default_threshold = 0.5
+    methods = {
+        # read OpenCV docs for description
+        cv2.cv.CV_TM_CCORR_NORMED,
+        cv2.cv.CV_TM_CCOEFF_NORMED,
+        cv2.cv.CV_TM_SQDIFF_NORMED
+    }
 
     def __init__(self, size=default_size, method=default_method, threshold=default_threshold):
         # TODO: try for different parameters value in diploma
@@ -24,6 +30,7 @@ class TemplateLetterRecognizer(ILetterRecognizer):
         candidates = list()
         prepared = cv2.resize(image, self._size)
         prepared = cv2.cvtColor(prepared, cv2.COLOR_BGR2GRAY)
+        prepared = cv2.equalizeHist(prepared)
         for i, template in enumerate(self._templates):
             match = self._math_template(prepared, template)
             if match >= self._threshold:
@@ -31,7 +38,6 @@ class TemplateLetterRecognizer(ILetterRecognizer):
         if candidates:
             idx = max(candidates, key=lambda x: x[1])[0]
             return self._classes[idx]
-        return None
 
     def letters(self, images):
         return [self.letter(img) for img in images]
@@ -53,5 +59,6 @@ class TemplateLetterRecognizer(ILetterRecognizer):
                 continue
             unique_letter.add(letter)
             resized = cv2.resize(template, self._size)
-            self._templates.append(resized)
+            template = cv2.equalizeHist(resized)
+            self._templates.append(template)
             self._classes.append(letter)

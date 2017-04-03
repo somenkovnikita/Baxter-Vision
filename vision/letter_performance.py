@@ -26,29 +26,25 @@ def performance(recognizer, test_set, write_log=True):
     end = timeit.default_timer()
 
     results = [ans == cor for ans, cor in zip(answers, corrects)]
-    fp = [ans and not cor for ans, cor in zip(answers, corrects)]
-    fn = [not ans and cor for ans, cor in zip(answers, corrects)]
 
     print 'Elapsed time', (end - start) * 1000.0, 'ms'
     print 'Correct recognition:', results.count(True), '/', len(results)
-    print 'False Positive:', fp.count(True), '/', len(fp)
-    print 'False Negative:', fn.count(True), '/', len(fn)
 
     if write_log:
         with open('performance.log', 'w') as prf:
             for answer, correct in zip(answers, corrects):
                 if answer != correct:
-                    templ = 'ans: {0}, cor: {1}\n'
-                    line = templ.format(answer, correct)
+                    temp = 'ans: {0}, cor: {1}\n'
+                    line = temp.format(answer, correct)
                     prf.write(line)
 
     for image, correct in test_set:
         recognizer.letter(image)
 
 
-def prepare_template_recognition(filename):
-    ILetterRecognizer.setup_letters(filename)
-    template_recognizer = TemplateLetterRecognizer()
+def prepare_template_recognition(filename, s, m, t):
+
+    template_recognizer = TemplateLetterRecognizer(s, m, t)
     return template_recognizer
 
 
@@ -64,6 +60,31 @@ def prepare_test_set(test_set_directory):
     return ts
 
 
+def full_template_performance(test_set):
+    methods = dict(CCORR=cv2.cv.CV_TM_CCORR_NORMED,
+                   CCOEFF=cv2.cv.CV_TM_CCOEFF_NORMED,
+                   SQDIFF=cv2.cv.CV_TM_SQDIFF_NORMED)
+    threshes = [0.1 * r for r in range(10)]
+    sizes = [s for s in range(5, 50, 5)]
+
+    for method, val in methods.items():
+        print '-' * 10
+        print 'Method:', method
+        for thresh in threshes:
+            print '-' * 10
+            print 'Thresh:', thresh
+            for size in sizes:
+                print '-' * 10
+                print 'Size:', size
+                rec = TemplateLetterRecognizer((size, size), val, thresh)
+                performance(rec, test_set)
+
+
+def default_template_performance(test_set):
+    rec = TemplateLetterRecognizer()
+    performance(rec, test_set)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Print performance for letter recognition ways')
@@ -77,12 +98,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    recognizer = None
     if args.method == 'template':
         training_set = join(args.training_set_dir, 'marked.list')
-        recognizer = prepare_template_recognition(training_set)
+        ILetterRecognizer.setup_letters(training_set)
     elif args.method == 'perceptron':
         raise NotImplementedError('For perceptron in future')
 
     test_set = prepare_test_set(args.test_set_dir)
-    performance(recognizer, test_set)
+    # full_template_performance(test_set)
+    default_template_performance(test_set)
