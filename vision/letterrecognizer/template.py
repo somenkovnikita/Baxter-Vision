@@ -22,9 +22,10 @@ class TemplateLetterRecognizer(ILetterRecognizer):
 
     def letter(self, image):
         candidates = list()
-        resized = cv2.resize(image, self._size)
+        prepared = cv2.resize(image, self._size)
+        prepared = cv2.cvtColor(prepared, cv2.COLOR_BGR2GRAY)
         for i, template in enumerate(self._templates):
-            match = self._math_template(resized, template)
+            match = self._math_template(prepared, template)
             if match >= self._threshold:
                 candidates.append((i, match))
         if candidates:

@@ -34,7 +34,7 @@ class ILetterRecognizer:
             for line in letters:
                 image_path, letter = line.split()
                 image_path = join(basedir, image_path)
-                image = cv2.imread(image_path)
+                image = cv2.imread(image_path, cv2.CV_LOAD_IMAGE_GRAYSCALE)
                 element = image, letter
                 ts.append(element)
 
