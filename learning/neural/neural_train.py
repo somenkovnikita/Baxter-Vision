@@ -12,16 +12,16 @@ h = 50
 siz = w * h
 
 test_hardcode_path = [
-    ('assets/neural/training_set/а/pos1.png', np.array([1, 0, 0, 0, 0])),
-    ('assets/neural/training_set/а/pos2.png', np.array([1, 0, 0, 0, 0])),
-    ('assets/neural/training_set/б/pos3.png', np.array([0, 1, 0, 0, 0])),
-    ('assets/neural/training_set/б/pos4.png', np.array([0, 1, 0, 0, 0])),
-    ('assets/neural/training_set/в/pos5.png', np.array([0, 0, 1, 0, 0])),
-    ('assets/neural/training_set/г/pos6.png', np.array([0, 0, 0, 1, 0])),
-    ('assets/neural/training_set/г/pos7.png', np.array([0, 0, 0, 1, 0])),
-    ('assets/neural/training_set/д/pos8.png', np.array([0, 0, 0, 0, 1])),
-    # ('assets/neural/training_set/а/pos2.png', np.array([0, 1])),
-    # ('assets/neural/training_set/б/pos4.png', np.array([1, 0])),
+    ('assets/letters/training_set/а/pos1.png', np.array([1, 0, 0, 0, 0])),
+    ('assets/letters/training_set/а/pos2.png', np.array([1, 0, 0, 0, 0])),
+    ('assets/letters/training_set/б/pos3.png', np.array([0, 1, 0, 0, 0])),
+    ('assets/letters/training_set/б/pos4.png', np.array([0, 1, 0, 0, 0])),
+    ('assets/letters/training_set/в/pos5.png', np.array([0, 0, 1, 0, 0])),
+    ('assets/letters/training_set/г/pos6.png', np.array([0, 0, 0, 1, 0])),
+    ('assets/letters/training_set/г/pos7.png', np.array([0, 0, 0, 1, 0])),
+    ('assets/letters/training_set/д/pos8.png', np.array([0, 0, 0, 0, 1])),
+    # ('assets/letters/training_set/а/pos2.png', np.array([0, 1])),
+    # ('assets/letters/training_set/б/pos4.png', np.array([1, 0])),
 ]
 
 def network_init():
@@ -35,9 +35,9 @@ def train(images, classes):
     
     network.train(images, classes, None)
 
-    im1 = cv2.imread('assets/neural/training_set/а/pos2.png')
-    # im2 = cv2.imread('assets/neural/test_set/б.jpg')
-    im2 = cv2.imread('assets/neural/training_set/й/pos15.png')
+    im1 = cv2.imread('assets/letters/training_set/а/pos2.png')
+    # im2 = cv2.imread('assets/letters/test_set/б.jpg')
+    im2 = cv2.imread('assets/letters/training_set/й/pos15.png')
 
 
     im1 = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
@@ -87,7 +87,7 @@ def load_images(images_paths):
     return images
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train neural network")
+    parser = argparse.ArgumentParser(description="Train letters network")
     parser.add_argument("-i", "--input_dir", help="Input file with paths", required=True)
 
     args = parser.parse_args()

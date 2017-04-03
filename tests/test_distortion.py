@@ -1,10 +1,11 @@
-import numpy
 import cv2
+import numpy
+
 from tools import utils
 
 # Image distortion test by D.D.M. 2017(c)
 # We can use this script for generate
-# images for neural network
+# images for letters network
 TEST_NAME = "Image distortion test"
 
 

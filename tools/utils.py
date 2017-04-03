@@ -1,11 +1,12 @@
-import cv2
 import os
+
+import cv2
 import numpy
 
 LEFT_BAXTER_CAMERA = "left_hand"
 RIGHT_BAXTER_CAMERA = "right_hand"
 HEAD_BAXTER_CAMERA = "head"
-NEURAL_NET_DIR = "../assets/neural/training_set"
+NEURAL_NET_DIR = "../assets/letters/training_set"
 NEURAL_SET_FILE = "../config/training_set.txt"
 RED_COLOR = (0, 0, 255)
 ESCAPE_KEY = 27
@@ -44,7 +45,7 @@ def setup_images(im_data, (width, height)):
 
     for im in im_data:
         (image, fl) = im
-        # Resizing(for neural network)
+        # Resizing(for letters network)
         rs_image = cv2.resize(image, (width, height))
         # Normalization
         norm_image = cv2.normalize(rs_image, alpha=-1, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
