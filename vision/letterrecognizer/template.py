@@ -8,7 +8,7 @@ from interface import ILetterRecognizer
 class TemplateLetterRecognizer(ILetterRecognizer):
     default_width, default_height = 50, 50
     default_size = (default_width, default_height)
-    default_method = cv2.CV_TM_CCORR_NORMED
+    default_method = cv2.cv.CV_TM_CCORR_NORMED
     default_threshold = 0.8
 
     def __init__(self, size=default_size, method=default_method, threshold=default_threshold):
@@ -25,11 +25,12 @@ class TemplateLetterRecognizer(ILetterRecognizer):
         resized = cv2.resize(image, self._size)
         for i, template in enumerate(self._templates):
             match = self._math_template(resized, template)
-            max_val = max(match)
-            if max_val >= self._threshold:
-                candidates.append((i, max_val))
-        idx = max(candidates, key=lambda x: x[1])[0]
-        return self._classes[idx]
+            if match >= self._threshold:
+                candidates.append((i, match))
+        if candidates:
+            idx = max(candidates, key=lambda x: x[1])[0]
+            return self._classes[idx]
+        return None
 
     def letters(self, images):
         return [self.letter(img) for img in images]
@@ -49,6 +50,7 @@ class TemplateLetterRecognizer(ILetterRecognizer):
         for template, letter in training_set:
             if letter in unique_letter:
                 continue
+            unique_letter.add(letter)
             resized = cv2.resize(template, self._size)
             self._templates.append(resized)
             self._classes.append(letter)

@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from os.path import dirname, join
 
 import cv2
 
@@ -28,11 +29,13 @@ class ILetterRecognizer:
             <image-path> <letter/class>
         """
         ts = ILetterRecognizer.training_set
+        basedir = dirname(filename)
         with open(filename) as letters:
             for line in letters:
                 image_path, letter = line.split()
+                image_path = join(basedir, image_path)
                 image = cv2.imread(image_path)
-                element = image, letter.strip()
+                element = image, letter
                 ts.append(element)
 
     __metaclass__ = ABCMeta

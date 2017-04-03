@@ -6,7 +6,12 @@ import cv2
 
 from collect_images import collect_images
 
-"""Script for mark image for generate *.list files"""
+"""
+Script for mark image for generate *.list files
+
+Output format:
+<image-path> <letter/class>
+"""
 
 
 def mark_images(basedir):
