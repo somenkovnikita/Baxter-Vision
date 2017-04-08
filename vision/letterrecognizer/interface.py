@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 from os.path import dirname, join
 
 import cv2
+import numpy as np
 
 
 class ILetterRecognizer:
