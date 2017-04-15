@@ -44,4 +44,4 @@ if __name__ == '__main__':
     makred = mark_images(args.input_dir)
     with codecs.open(args.output_file, 'w', encoding='utf-8') as mark_file:
         for line in makred:
-            mark_file.write('\t'.join(line) + '\n')
+            mark_file.write(' '.join(line) + '\n')

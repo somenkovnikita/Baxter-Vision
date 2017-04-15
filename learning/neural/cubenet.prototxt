@@ -5,7 +5,7 @@ layers {
   top: "data"
   top: "label"
   image_data_param {
-    source: "../trainig.txt"
+    source: "assets/letters/training_set/marked.list"
     batch_size: 128
     shuffle: true
   }
@@ -20,12 +20,12 @@ layers {
   top: "data"
   top: "label"
   image_data_param {
-    source: "../test.txt"
+    source: "assets/letters/test_set/marked.list"
     batch_size: 120
   }
-  transform_param {
-    mean_file: "/home/deploy/opt/SVHN/svhn/winny_net5/mean.binaryproto"
-  }
+#  transform_param {
+ #   mean_file: "/home/deploy/opt/SVHN/svhn/winny_net5/mean.binaryproto"
+  #}
   include: { phase: TEST }
 }
 
