@@ -19,7 +19,7 @@ class ILetterRecognizer:
     @abstractmethod
     def letters(self, images):
         # type: (ILetterRecognizer, list(np.array)) -> list
-        """Recognize letters on images. This _method may be faster than:
+        """Recognize letters on images. This method may be faster than:
             for img in images: LetterRecognize.letter(img)"""
         raise NotImplementedError('LetterRecognize.letters')
 
@@ -33,10 +33,10 @@ class ILetterRecognizer:
         basedir = dirname(filename)
         with open(filename) as letters:
             for line in letters:
-                image_path, letter = line.split()
+                image_path, class_ = line.split()
                 image_path = join(basedir, image_path)
                 image = cv2.imread(image_path, cv2.CV_LOAD_IMAGE_GRAYSCALE)
-                element = image, letter
+                element = image, class_
                 ts.append(element)
 
     __metaclass__ = ABCMeta

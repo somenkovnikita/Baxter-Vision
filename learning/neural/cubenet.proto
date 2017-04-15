@@ -1,0 +1,218 @@
+name: "CubeNet"
+layers {
+  name: "cube-rbg"
+  type: IMAGE_DATA
+  top: "data"
+  top: "label"
+  image_data_param {
+    source: "../trainig.txt"
+    batch_size: 128
+    shuffle: true
+  }
+#  transform_param {
+#    mean_file: "/home/deploy/opt/SVHN/svhn/winny_net5/mean.binaryproto"
+#  }
+  include: { phase: TRAIN }
+}
+layers {
+  name: "cube-rbg"
+  type: IMAGE_DATA
+  top: "data"
+  top: "label"
+  image_data_param {
+    source: "../test.txt"
+    batch_size: 120
+  }
+  transform_param {
+    mean_file: "/home/deploy/opt/SVHN/svhn/winny_net5/mean.binaryproto"
+  }
+  include: { phase: TEST }
+}
+
+# main
+ layers {
+      bottom: "data"
+      top: "conv1/5x5_s1"
+      name: "conv1/5x5_s1"
+      type: CONVOLUTION
+      blobs_lr: 1
+      blobs_lr: 2
+      convolution_param {
+        num_output: 64
+        kernel_size: 5
+        stride: 1
+        pad: 2
+        weight_filler {
+          type: "xavier"
+          std: 0.0001
+        }
+      }
+    }
+    layers {
+      bottom: "conv1/5x5_s1"
+      top: "conv1/5x5_s1"
+      name: "conv1/relu_5x5"
+      type: RELU
+    }
+    layers {
+      bottom: "conv1/5x5_s1"
+      top: "pool1/3x3_s2"
+      name: "pool1/3x3_s2"
+      type: POOLING
+      pooling_param {
+        pool: MAX
+        kernel_size: 3
+        stride: 2
+      }
+    }
+
+    layers {
+      bottom: "pool1/3x3_s2"
+      top: "conv2/5x5_s1"
+      name: "conv2/5x5_s1"
+      type: CONVOLUTION
+      blobs_lr: 1
+      blobs_lr: 2
+      convolution_param {
+        num_output: 64
+        kernel_size: 5
+        stride: 1
+        pad: 2
+        weight_filler {
+          type: "xavier"
+          std: 0.01
+        }
+      }
+    }
+    layers {
+      bottom: "conv2/5x5_s1"
+      top: "conv2/5x5_s1"
+      name: "conv2/relu_5x5"
+      type: RELU
+    }
+    layers {
+      bottom: "conv2/5x5_s1"
+      top: "pool2/3x3_s2"
+      name: "pool2/3x3_s2"
+      type: POOLING
+      pooling_param {
+        pool: MAX
+        kernel_size: 3
+        stride: 2
+      }
+    }
+    layers {
+      bottom: "pool2/3x3_s2"
+      top: "conv3/5x5_s1"
+      name: "conv3/5x5_s1"
+      type: CONVOLUTION
+      blobs_lr: 1
+      blobs_lr: 2
+      convolution_param {
+        num_output: 128
+        kernel_size: 5
+        stride: 1
+        pad: 2
+        weight_filler {
+          type: "xavier"
+          std: 0.01
+        }
+      }
+    }
+    layers {
+      bottom: "conv3/5x5_s1"
+      top: "conv3/5x5_s1"
+      name: "conv3/relu_5x5"
+      type: RELU
+    }
+    layers {
+      bottom: "conv3/5x5_s1"
+      top: "pool3/3x3_s2"
+      name: "pool3/3x3_s2"
+      type: POOLING
+      pooling_param {
+        pool: MAX
+        kernel_size: 3
+        stride: 2
+      }
+    }
+
+# output
+    layers {
+      bottom: "pool3/3x3_s2"
+      top: "ip1/3072"
+      name: "ip1/3072"
+      type: INNER_PRODUCT
+      blobs_lr: 1
+      blobs_lr: 2
+      inner_product_param {
+        num_output: 3072
+        weight_filler {
+          type: "gaussian"
+          std: 0.001
+        }
+        bias_filler {
+          type: "constant"
+        }
+      }
+    }
+    layers {
+      bottom: "ip1/3072"
+      top: "ip1/3072"
+      name: "ip1/relu_5x5"
+      type: RELU
+    }
+    layers {
+      bottom: "ip1/3072"
+      top: "ip2/2048"
+      name: "ip2/2048"
+      type: INNER_PRODUCT
+      blobs_lr: 1
+      blobs_lr: 2
+      inner_product_param {
+        num_output: 2048
+        weight_filler {
+          type: "xavier"
+          std: 0.001
+        }
+        bias_filler {
+          type: "constant"
+        }
+      }
+    }
+    layers {
+      bottom: "ip2/2048"
+      top: "ip2/2048"
+      name: "ip2/relu_5x5"
+      type: RELU
+    }
+    layers {
+      bottom: "ip2/2048"
+      top: "ip3/10"
+      name: "ip3/10"
+      type: INNER_PRODUCT
+      blobs_lr: 1
+      blobs_lr: 2
+      inner_product_param {
+        num_output: 10
+        weight_filler {
+          type: "xavier"
+          std: 0.1
+        }
+      }
+    }
+    layers {
+      name: "accuracy"
+      type: ACCURACY
+      bottom: "ip3/10"
+      bottom: "label"
+      top: "accuracy"
+      include: { phase: TEST }
+    }
+    layers {
+      name: "loss"
+      type: SOFTMAX_LOSS
+      bottom: "ip3/10"
+      bottom: "label"
+      top: "loss"
+    }

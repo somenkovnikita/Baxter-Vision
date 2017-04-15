@@ -5,25 +5,28 @@ from os.path import join, basename
 import cv2
 
 from collect_images import collect_images
+from maps import ClassMap
 
 """
 Script for mark image for generate *.list files
 
 Output format:
-<image-path> <letter/class>
+<image-path> <class>
 """
 
 
 def mark_images(basedir):
     results = list()
+    mapper = ClassMap('config/class_letter.txt')
     for filename in collect_images(basedir):
         image = cv2.imread(filename)
         resized = cv2.resize(image, (100, 100))
         cv2.imshow('Mark', resized)
-        key = cv2.waitKey()
-        result = basename(filename), unichr(key)
+        letter = unichr(cv2.waitKey())
+        class_ = mapper.get_class(letter)
+        result = basename(filename), str(class_)
         results.append(result)
-        print result
+        print result, letter
     return results
 
 
