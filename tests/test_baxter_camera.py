@@ -1,13 +1,13 @@
 import cv2
 from tools import utils
-from baxter import BaxterCamera
+from baxter import Camera
 
 # Baxter camera test by D.D.M. 2017(c)
 
 TEST_NAME = "OpenCV Baxter camera test"
 
 print TEST_NAME + " >> Init..."
-bax_camera = BaxterCamera(utils.LEFT_BAXTER_CAMERA)
+bax_camera = Camera(utils.LEFT_BAXTER_CAMERA)
 # local_camera.set_color(cv2.COLOR_BGR2HLS_FULL)
 print TEST_NAME + " >> OK"
 
