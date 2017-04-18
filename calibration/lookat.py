@@ -1,9 +1,8 @@
-
 import cv2
-from baxter import LimbMover
-
+from baxter import handmover
 
 import baxter_interface
+
 # import baxter_external_device
 #
 # from baxter_interface import CHECK_VERSION
@@ -15,17 +14,18 @@ x = 0.5
 y = 0.0
 z = 0.1
 
+
 def set_and_log(coord, name):
     coord += dc
     print name, coord
 
+
 lookAt = False
-x_px = 0
+x_pcdx = 0
 y_px = 0
 cascade = None
 
 grip = None
-
 
 
 def mouse_callback(event, x, y, flags, param):
@@ -38,9 +38,8 @@ def mouse_callback(event, x, y, flags, param):
         print x, y
 
 
-
 def init(config):
-    global mover,x ,y, cascade, grip
+    global mover, x, y, cascade, grip
 
     cv2.namedWindow('Aim')
     cv2.setMouseCallback('Aim', mouse_callback)
@@ -52,14 +51,14 @@ def init(config):
     if cascade.load(config):
         print 'Load cascade success'
 
-    mover = LimbMover.LimbMover('left')
-
+    mover = HandMover.HandMover('left')
 
     pass
 
 
 aim_x = 0.56
 aim_y = 0.45
+
 
 def draw_aim(frame):
     global aim_x, aim_y
@@ -81,12 +80,16 @@ def draw_aim(frame):
 def get_z(z):
     return -330.0 * z + 201.0
 
+
 old_z = z
+
+
 def down():
     global mover, old_z
     pose = mover._get_current_pose()
-    old_z, pose[2] = pose[2], -0.12
+    # old/_z, pose[2] = pose[2], -0.12
     mover.move(pose, move=True)
+
 
 def up():
     global mover, old_z
@@ -94,9 +97,11 @@ def up():
     pose[2] = old_z
     mover.move(pose, move=True)
 
+
 def take():
     global grip
     grip.close()
+
 
 def uptake():
     global grip
@@ -198,4 +203,3 @@ def lookat(frame):
 
     cv2.imshow('Aim', cframe)
     cv2.waitKey(100)
-
