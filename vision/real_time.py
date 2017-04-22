@@ -16,9 +16,9 @@ def parse_baxter_camera(camera_name):
 def get_camera(camera_name):
     if "baxter" in camera_name:
         from rospy import init_node
-        from baxter import BaxterCamera
+        from baxter import Camera
         init_node("real_time_camera")
-        return BaxterCamera.Camera(parse_baxter_camera(camera_name))
+        return Camera.Camera(parse_baxter_camera(camera_name))
     else:
         from tools.localcamera import LocalCamera
         return LocalCamera()

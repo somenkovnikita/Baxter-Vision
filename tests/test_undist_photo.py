@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import rospy
 from tools import utils
-from baxter import BaxterCamera
+from baxter import Camera
 
 # OpenCV Baxter make photos test by Ivan. 2017(c)
 
@@ -12,7 +12,7 @@ TEST_NAME = "OpenCV Baxter make photos"
 photo_count = 1
 
 print TEST_NAME + " >> Init..."
-bax_camera = BaxterCamera(utils.LEFT_BAXTER_CAMERA)
+bax_camera = Camera(utils.LEFT_BAXTER_CAMERA)
 print TEST_NAME + " >> OK"
 
 x = np.load("x.npy")

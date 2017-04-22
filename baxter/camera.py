@@ -57,7 +57,7 @@ class Camera:
             self.cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
             self.has_frame = True
         except CvBridgeError as e:
-            print "BaxterCamera: Error camera frame " + e
+            print "Camera: Error camera frame " + e
             self.has_frame = False
             pass
         cv2.waitKey(1)

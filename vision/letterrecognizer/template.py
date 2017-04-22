@@ -32,7 +32,7 @@ class TemplateLetterRecognizer(ILetterRecognizer):
         prepared = cv2.cvtColor(prepared, cv2.COLOR_BGR2GRAY)
         prepared = cv2.equalizeHist(prepared)
         for i, template in enumerate(self._templates):
-            match = self._math_template(prepared, template)
+            match = self._match_template(prepared, template)
             if match >= self._threshold:
                 candidates.append((i, match))
         if candidates:
@@ -42,7 +42,7 @@ class TemplateLetterRecognizer(ILetterRecognizer):
     def letters(self, images):
         return [self.letter(img) for img in images]
 
-    def _math_template(self, image, template):
+    def _match_template(self, image, template):
         args = image, template, self._method
         match = cv2.matchTemplate(*args)
         min_max = cv2.minMaxLoc(match)
