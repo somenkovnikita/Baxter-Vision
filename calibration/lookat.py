@@ -1,7 +1,5 @@
-import cv2
-from baxter import handmover
-
 import baxter_interface
+import cv2
 
 # import baxter_external_device
 #
@@ -165,8 +163,8 @@ def lookat(frame):
     if lookAt:
         h, w = cframe.shape[:2]
         z_px = get_z(z)
-        x = 0.157 / z_px * (y_px - h * aim_y)
-        y = 0.157 / z_px * (x_px - w * aim_x)
+        x = 0.157 * (y_px - h * aim_y) / z_px
+        y = 0.157 * (x_px - w * aim_x) / z_px
         print x, y, z, z_px
         lookAt = False
 

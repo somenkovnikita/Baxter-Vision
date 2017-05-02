@@ -1,5 +1,6 @@
 import codecs
 
+
 class ClassMap:
     """Contain info letter <-> class"""
     def __init__(self, model):
