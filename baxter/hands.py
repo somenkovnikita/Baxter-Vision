@@ -1,3 +1,4 @@
+# coding=utf-8
 import baxter_interface
 import rospy
 import tf
@@ -12,6 +13,7 @@ class HandMover:
         self.limb_interface = baxter_interface.Limb(limb)
         self.pose = self._get_current_pose()
 
+    # Перемещение манипулятора по заданным координатам
     def move(self, rpy_pose, move=False):
         quaternion_pose = conversions.list_to_pose_stamped(rpy_pose, "base")
 
@@ -37,12 +39,7 @@ class HandMover:
         else:
             return False
 
-    def down(self):
-        pass
-
-    def up(self):
-        pass
-
+    # Вывод текущей позиции
     def _get_current_pose(self):
         quaternion_pose = self.limb_interface.endpoint_pose()
         position = quaternion_pose["position"]
@@ -52,6 +49,7 @@ class HandMover:
         return [position[0], position[1], position[2], euler[0], euler[1], euler[2]]
 
     @staticmethod
+    # Только для отладки(см. выше)
     def _print_pose(rpy_pose, position, euler):
         print "             request   actual"
         print "front back = %5.4f " % rpy_pose[0], "%5.4f" % position[0]
@@ -60,12 +58,3 @@ class HandMover:
         print "roll       = %5.4f " % rpy_pose[3], "%5.4f" % euler[0]
         print "pitch      = %5.4f " % rpy_pose[4], "%5.4f" % euler[1]
         print "yaw        = %5.4f " % rpy_pose[5], "%5.4f" % euler[2]
-
-
-class Gripper:
-    def take(self):
-        pass
-
-    def untake(self):
-        pass
-    

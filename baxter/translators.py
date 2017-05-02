@@ -1,4 +1,5 @@
 # coding=utf-8
+
 # Переводить координаты  из координат Baxter'a(rpy)
 # в пиксели
 class CoordinatesTranslator:
@@ -21,7 +22,7 @@ class CoordinatesTranslator:
         self.aim_x, self.aim_y = aim
 
     def set_resolution(self, resolution):
-        w, h = resolution
+        self.w, self.h = resolution
 
     def translate(self, x_px, y_px, z_px):
         x = self.dmove * (y_px - self.h * self.aim_y) / z_px
