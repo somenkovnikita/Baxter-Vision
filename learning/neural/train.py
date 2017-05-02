@@ -4,65 +4,15 @@ from time import strftime, gmtime
 
 import cv2
 import numpy as np
-from nolearn.dbn import DBN
+from sklearn.externals import joblib
 from sklearn.metrics import classification_report
+from sklearn.svm import LinearSVC
 
 """Train multilayer perceptron network for recognition of letters"""
 """
 Format line in file with marked images:
 <path-to-image> <class>
 """
-
-def generate_data():
-    data = [
-        # np.array([0.0, 0.0, 0.0, 0.0]),
-        np.array([0.0, 0.0, 0.0, 255.0]),
-        np.array([0.0, 0.0, 255.0, 0.0]),
-        np.array([0.0, 0.0, 255.0, 255.0]),
-        np.array([0.0, 255.0, 0.0, 0.0]),
-        np.array([0.0, 255.0, 0.0, 255.0]),
-        np.array([0.0, 255.0, 255.0, 255.0]),
-        np.array([255.0, 0.0, 0.0, 0.0]),
-        np.array([255.0, 0.0, 0.0, 255.0]),
-        # np.array([255.0, 0.0, 255.0, 255.0]),
-        # np.array([255.0, 255.0, 255.0, 255.0]),
-        # np.array([  0, 0, 0, 1, 0, 0, 0, 0]),
-        # np.array([  0, 0, 0, 1, 0, 0, 0, 1]),
-        # np.array([  0, 0, 0, 1, 0, 0, 1, 1]),
-        # np.array([  0, 0, 0, 1, 0, 1, 1, 1]),
-        # np.array([  0, 0, 0, 1, 1, 1, 1, 1]),
-        # np.array([  0, 0, 1, 0, 0, 0, 0, 0]),
-        # np.array([  0, 0, 1, 0, 0, 0, 0, 1]),
-        # np.array([  0, 0, 1, 0, 0, 0, 1, 1]),
-        # np.array([  0, 0, 1, 0, 0, 1, 1, 1]),
-        # np.array([  0, 0, 1, 0, 1, 1, 1, 1]),
-        # np.array([  0, 0, 1, 1, 1, 1, 1, 1]),
-        # np.array([  0, 1, 0, 0, 0, 0, 0, 0]),
-        # np.array([  0, 1, 0, 0, 0, 0, 0, 1]),
-        # np.array([  0, 1, 0, 0, 0, 0, 1, 1]),
-        # np.array([  0, 1, 0, 0, 0, 1, 1, 1]),
-        # np.array([  0, 1, 0, 0, 1, 1, 1, 1]),
-        # np.array([  0, 1, 0, 1, 1, 1, 1, 1]),
-        # np.array([  0, 1, 1, 1, 1, 1, 1, 1]),
-        # np.array([  1, 0, 0, 0, 0, 0, 0, 0]),
-        # np.array([  1, 0, 0, 0, 0, 0, 0, 1]),
-        # np.array([  1, 0, 0, 0, 0, 0, 1, 1]),
-        # np.array([  1, 0, 0, 0, 0, 1, 1, 1]),
-        # np.array([  1, 0, 0, 0, 1, 1, 1, 1]),
-        # np.array([  1, 0, 0, 1, 1, 1, 1, 1]),
-        # np.array([  1, 0, 1, 1, 1, 1, 1, 1]),
-        # np.array([  1, 1, 1, 1, 1, 1, 1, 1]),
-    ]
-
-    # for img in data:
-        # f = np.array(img.reshape((2, 2)))
-        # f2 = cv2.resize(f, (25, 25))
-        # cv2.imshow('a', f2)
-        # cv2.waitKey()
-    data2 = list()
-    for img in data:
-        data2.append(img / 255.0)
-    return np.array(data2), np.array(map(float, range(11)))
 
 
 def prepare_images(paths):
@@ -72,7 +22,7 @@ def prepare_images(paths):
         image = cv2.equalizeHist(image)
 
         image = cv2.resize(image, (25, 25))
-        image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
+        # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
 
         # cv2.imshow('image', image)
         # cv2.waitKey(0)
@@ -130,31 +80,33 @@ if __name__ == '__main__' :
 
     inputs = prepare_images(paths)
     outputs = prepare_classes(classes, args.output_layer)
-    weights = np.ones(len(paths))
 
     print 'Creating network...'
 
-
-    input, outputs = generate_data()
     layers = [args.input_layer]
     layers += args.hidden_layers
-    layers.append(8)
+    layers.append(30)
 
+    # network = DBN(layers,
+    #               learn_rates=0.1,
+    #               learn_rate_decays=0.9,
+    #               epochs=1000,
+    #               minibatches_per_epoch=8,
+    #               verbose=1)
+    network = LinearSVC()
+    print network
 
-    # a = generate_data()
-    network = DBN(layers,
-                  learn_rates=0.1,
-                  learn_rate_decays=0.9,
-                  epochs=100,
-               
-                  minibatches_per_epoch=8,
-                  verbose=1)
+    network.fit(inputs, outputs)
+    preds = network.predict(inputs)
+    print classification_report(outputs, preds)
 
-    vv= np.array(map(float, range(8)))
-    network.fit(input, vv)
-    preds = network.predict(input)
-    print classification_report(vv, preds)
+    test_set = load_dataset('assets/letters/test_set')
+    i2 = prepare_images(test_set[0])
+    i3 = prepare_classes(test_set[1], args.output_layer)
+    preds = network.predict(i2)
+    print classification_report(i3, preds)
 
+    joblib.dump(network, 'p.out')
 
     #
     # X = inputs
@@ -164,9 +116,7 @@ if __name__ == '__main__' :
     # model = network
     # print(model)
     #
-    # test_set = load_dataset('assets/letters/test_set')
-    # i2 = prepare_images(test_set[0])
-    # i3 = prepare_classes(test_set[1], args.output_layer)
+
     #
     #
     # # make predictions

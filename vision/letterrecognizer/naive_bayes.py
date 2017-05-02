@@ -16,10 +16,11 @@ class NaiveBayes(ILetterRecognizer):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = cv2.equalizeHist(image)
 
-        image = cv2.resize(image, (50, 50))
-        image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
+        image = cv2.resize(image, (25, 25))
+
+        # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
         
-        img = np.array([image.flatten()/255.0])
+        img = np.array([image.flatten().astype(float) / 255.0])
         return self._model.predict(img)
 
     def preproc(self, image):
