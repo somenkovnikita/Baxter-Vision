@@ -1,12 +1,17 @@
 # coding=utf-8
 import baxter_interface
 import cv2
+from baxter.hands import HandMover
+from baxter.translators import CoordinatesTranslator
 
 TEST_NAME = "Test Baxter cubes search(look at)"
 
+# Центр в % от начала
 aim_x = 0.56
 aim_y = 0.45
+# Приращение для перемещения по координатам
 dc = 0.03
+dmove = 0.157
 x = 0.5
 y = 0.0
 z = 0.1
@@ -15,6 +20,7 @@ isGripped = False
 x_px = 0
 y_px = 0
 old_z = z
+translator = None
 mover = None
 cascade = None
 grip = None
@@ -34,16 +40,18 @@ def mouse_callback(event, x, y, flags, param):
 
 # Инициализация классов теста
 def init(config):
-    global mover, x, y, cascade, grip
+    global mover, x, y, cascade, grip, translator
     cv2.namedWindow(TEST_NAME)
     cv2.setMouseCallback(TEST_NAME, mouse_callback)
     grip = baxter_interface.Gripper("left")
     grip.reset_custom_state()
     cascade = cv2.CascadeClassifier()
+    translator = CoordinatesTranslator((aim_x, aim_y), dmove)
     mover = HandMover.HandMover("left")
 
     if cascade.load(config):
         print "Load cascade success"
+
 
 # Отрисовка перекрестья для позиционирования
 def draw_aim(frame):
@@ -92,7 +100,7 @@ def take():
 
 
 # Основной цикл
-def lookat(frame):
+def look_at(frame):
     cframe = frame.copy()
 
     draw_aim(cframe)
@@ -129,6 +137,7 @@ def lookat(frame):
     # Захват\Выкл захват
     elif key == ord(" "):
         take()
+    # Движение вверх\вниз по z
     elif key == ord("z"):
         z += dc
         if mover.move([x, y, z, -3.14, 0.0, 0.0], move=True):
@@ -143,10 +152,9 @@ def lookat(frame):
             print "Error x down"
     # Установка робота на позицию
     if lookAt:
-        h, w = cframe.shape[:2]
         z_px = get_z(z)
-        x = 0.157 * (y_px - h * aim_y) / z_px
-        y = 0.157 * (x_px - w * aim_x) / z_px
+        translator.set_resolution(cframe.shape[:2])
+        x, y = translator.translate(x_px, y_px, z_px)
         print x, y, z, z_px
         lookAt = False
 
