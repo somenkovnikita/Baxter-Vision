@@ -14,6 +14,7 @@ dc = 0.03
 dmove = 0.157
 x = 0.5
 y = 0.0
+# 0.1 = 32см
 z = 0.1
 lookAt = False
 isGripped = False
@@ -72,8 +73,15 @@ def draw_aim(frame):
 
 
 # Реальная высота до объекта
-def get_z(z):
-    return -330.0 * z + 201.0
+# Для координат робота
+def get_rz(robot_z):
+    return -330.0 * robot_z + 201.0
+
+
+# Реальная высота до объекта
+# Для координат в метрах
+def get_mz(meter_z):
+    return -330.0 * (meter_z * 32) + 201.0
 
 
 # Методы перемещения и захвата
@@ -152,7 +160,7 @@ def look_at(frame):
             print "Error x down"
     # Установка робота на позицию
     if lookAt:
-        z_px = get_z(z)
+        z_px = get_rz(z)
         translator.set_resolution(cframe.shape[:2])
         x, y = translator.translate(x_px, y_px, z_px)
         print x, y, z, z_px
