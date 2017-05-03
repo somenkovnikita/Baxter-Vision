@@ -3,6 +3,7 @@ import cv2
 
 from letterrecognizer.interface import ILetterRecognizer
 from letterrecognizer.naive_bayes import NaiveBayes
+from tools.image_cutter import ClickChecker
 from tools.maps import ClassMap
 
 """
@@ -11,9 +12,9 @@ Module for cube detecting and letter recognize
 
 # for draw ru letter as en letter
 ru_to_en = {
-    u'а': 'a', u'б': 'b', u'в': 'v', u'г': 'g',
+    u'а': 'A', u'б': 'b', u'в': 'v', u'г': 'g',
     u'д': 'd', u'е': 'e', u'ё': 'yo', u'ж': 'zh',
-    u'з': 'z', u'и': 'i', u'й': 'Ji', 'uк': 'k',
+    u'з': 'z', u'и': 'i', u'й': 'Ji', u'к': 'k',
     u'л': 'l', u'м': 'm', u'н': 'n', u'о': 'o',
     u'п': 'p', u'р': 'r', u'с': 's', u'т': 't',
     u'у': 'u', u'ф': 'f', u'х': 'kh', u'ц': 'ts',
@@ -24,10 +25,11 @@ ru_to_en = {
 classmap = ClassMap('config/class_letter.txt')
 cascade = None
 letter_recognizer = None
+clicks =None
 
 
 def init(config):
-    global cascade, letter_recognizer
+    global cascade, letter_recognizer, clicks
 
     cascade = cv2.CascadeClassifier()
     if not cascade.load(config):
@@ -35,13 +37,16 @@ def init(config):
 
     # FIXME: hard code path!
     ILetterRecognizer.setup_letters('assets/letters/training_set/marked.list')
-    letter_recognizer = NaiveBayes('b.out')
+    letter_recognizer = NaiveBayes('p.out')
+
+    cv2.namedWindow('Cascade')
+    clicks = ClickChecker('Cascade')
 
 i = 0
 
-def run(frame):
 
-    global cascade, letter_recognizer,i
+def run(frame):
+    global cascade, letter_recognizer,i, clicks
     frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     frame2 = cv2.equalizeHist(frame2)
     cv2.imshow('test', frame2)
@@ -53,14 +58,9 @@ def run(frame):
     for x, y, w, h in cubes:
         start = x, y
         end = x + w, y + h
-        color = 255, 255, 255
+        color = 255, 255, 0
 
-        cutted_cube = frame[x: x + w, y: y + h]
-
-        if i < 100:
-            cv2.imwrite(str(i) + '.jpg', cutted_cube)
-            i+=1
-
+        cutted_cube = frame[y: y + h, x: x + w]
 
         if cutted_cube.size:
             class_ = letter_recognizer.letter(cutted_cube)[0]
@@ -77,3 +77,14 @@ def run(frame):
         print "Found %d rectangle(s)" % len(cubes), "r",  found
 
     cv2.imshow("Cascade", image)
+    #
+    # cls = clicks.get_clicks()
+    # if cls:
+    #     print cls
+    #
+    # for cx, cy in cls:
+    #     for x, y, w, h in cubes:
+    #         cutted_cube = frame[y: y + h, x: x + w]
+    #         if x <= cx <= x + w and y <= cy <= y + h:
+    #             cv2.imwrite(str(i) + '.jpg', cutted_cube)
+    #             i += 1

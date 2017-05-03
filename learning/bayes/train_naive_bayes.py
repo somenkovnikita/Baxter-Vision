@@ -1,10 +1,10 @@
-from sklearn.externals import joblib
 import argparse
 import os
 
 import cv2
 import numpy as np
 from sklearn.externals import joblib
+from sklearn.metrics import classification_report
 from sklearn.naive_bayes import GaussianNB
 
 
@@ -14,8 +14,8 @@ def prepare_images(paths):
         image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         image = cv2.equalizeHist(image)
 
-        image = cv2.resize(image, (50, 50))
-        image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
+        image = cv2.resize(image, (25, 25))
+        # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
         # cv2.imshow('1,', image)
         # cv2.waitKey()
         images.append(image.flatten().astype(float) / 255.0)
@@ -61,4 +61,7 @@ if __name__ == '__main__' :
     model = GaussianNB()
     model.fit(inputs, outputs)
 
-    joblib.dump(model, 'b.out')
+    preds = model.predict(inputs)
+    print classification_report(outputs, preds)
+
+    joblib.dump(model, 'p.out')

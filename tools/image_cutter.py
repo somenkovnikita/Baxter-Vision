@@ -83,3 +83,16 @@ if __name__ == '__main__':
             cv2.imwrite(fn, image[s[1]:s[3], s[0]:s[2]])
         base += len(squares)
 
+
+class ClickChecker:
+    def __init__(self, win_name):
+        self.clicks = list()
+        cv2.setMouseCallback(win_name, self.clicker_callback)
+
+    def clicker_callback(self, event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.clicks.append((x, y))
+
+    def get_clicks(self):
+        ref, self.clicks = self.clicks, list()
+        return ref
