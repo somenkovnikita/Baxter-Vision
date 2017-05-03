@@ -78,12 +78,6 @@ def get_rz(robot_z):
     return -330.0 * robot_z + 201.0
 
 
-# Реальная высота до объекта
-# Для координат в метрах
-def get_mz(robot_z):
-    return -330.0 * (robot_z * 32) + 201.0
-
-
 # Методы перемещения и захвата
 def down():
     global mover, old_z
