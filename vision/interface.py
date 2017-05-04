@@ -4,6 +4,19 @@ from os.path import dirname, join
 import cv2
 import numpy as np
 
+"""Define interface for vision"""
+
+
+class ICubeDetector:
+    """Interface for cube detect"""
+
+    @abstractmethod
+    def cubes(self, image):
+        # type: (ICubeDetector, np.array) -> list
+        """Find all cubes on image, return list of rectangles"""
+
+    __metaclass__ = ABCMeta
+
 
 class ILetterRecognizer:
     """Interface for letter recognize"""
@@ -12,7 +25,7 @@ class ILetterRecognizer:
 
     @abstractmethod
     def letter(self, image):
-        # type: (ILetterRecognizer, np.array) -> chr
+        # type: (ILetterRecognizer, np.array) -> int
         """Recognize letter on image"""
         raise NotImplementedError('LetterRecognize.letter')
 

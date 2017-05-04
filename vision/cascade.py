@@ -1,6 +1,6 @@
 import cv2
 
-from interface import ICubeDetector
+from vision.interface import ICubeDetector
 
 
 class CascadeCubeDetector(ICubeDetector):

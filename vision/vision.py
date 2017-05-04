@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import cv2
 
-from letterrecognizer.interface import ILetterRecognizer
-from letterrecognizer.naive_bayes import NaiveBayes
+from interface import ILetterRecognizer
+from naive_bayes import NaiveBayes
 from tools.image_cutter import ClickChecker
 from tools.maps import ClassMap
 

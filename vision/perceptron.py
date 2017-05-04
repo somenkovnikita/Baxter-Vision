@@ -1,6 +1,6 @@
 import cv2
 
-from interface import ILetterRecognizer
+from vision.interface import ILetterRecognizer
 
 
 class PerceptronLetterRecognizer(ILetterRecognizer):
