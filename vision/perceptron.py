@@ -4,13 +4,20 @@ from vision.interface import ILetterRecognizer
 
 
 class PerceptronLetterRecognizer(ILetterRecognizer):
-
     def __init__(self, config_file):
         default_width, default_height = 25, 25
         self._size = (default_width, default_height)
         self._classes = list()
         self._network = cv2.ANN_MLP()
         self._network.load(config_file)
+
+    # About _network.predict()
+    # Predicts responses for input samples.
+    # The method returns a dummy value which should be ignored.
+    # If you are using the default cvANN_MLP::SIGMOID_SYM activation function with the default parameter
+    # values fparam1=0 and fparam2=0 then the function used is y = 1.7159*tanh(2/3 * x),
+    # so the output will range from [-1.7159, 1.7159], instead of [0,1].
+
 
     # Setup image for neural network
     def prepare_image(self, image):
