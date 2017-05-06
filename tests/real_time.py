@@ -21,7 +21,7 @@ def get_camera(camera_name):
         return Camera.Camera(parse_baxter_camera(camera_name))
     else:
         from tools.localcamera import LocalCamera
-        return LocalCamera(1)
+        return LocalCamera()
 
 
 def simple_show(frame):

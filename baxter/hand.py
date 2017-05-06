@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import baxter_interface
+import cv2
 import tf
 from baxter_core_msgs.srv import SolvePositionIK
 from baxter_core_msgs.srv import SolvePositionIKRequest
@@ -112,6 +113,7 @@ class HandMover:
 
 class KeyboardManipulator:
     delta_move = 0.01
+    esc_key = 27
 
     def __init__(self, limb):
         # type: (HandMover, str) -> None
@@ -130,10 +132,16 @@ class KeyboardManipulator:
             ord('e'): self.up,
         }
 
-    def next_command(self, command):
-        execute = self.commands.get(command)
-        if execute is not None:
-            return execute()
+    def listen(self):
+        while True:
+            command = cv2.waitKey(20) & 0xFF
+            if command == KeyboardManipulator.esc_key:
+                break
+
+            execute = self.commands.get(command)
+            if execute is not None:
+                execute()
+        return self.hand.get_current_pose()
 
     def down(self):
         dz = -KeyboardManipulator.delta_move
@@ -158,3 +166,4 @@ class KeyboardManipulator:
     def forward(self):
         dx = KeyboardManipulator.delta_move
         return self.hand.try_delta_move(dx=dx)
+
