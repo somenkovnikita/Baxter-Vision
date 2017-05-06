@@ -108,3 +108,53 @@ class HandMover:
         print "roll       = %5.4f " % rpy_pose[3], "%5.4f" % euler[0]
         print "pitch      = %5.4f " % rpy_pose[4], "%5.4f" % euler[1]
         print "yaw        = %5.4f " % rpy_pose[5], "%5.4f" % euler[2]
+
+
+class KeyboardManipulator:
+    delta_move = 0.01
+
+    def __init__(self, limb):
+        # type: (HandMover, str) -> None
+        """
+        Choose limb to manipulator
+
+        :param limb: 'right' or 'left' limb 
+        """
+        self.hand = HandMover(limb)
+        self.commands = {
+            ord('w'): self.forward,
+            ord('s'): self.backward,
+            ord('a'): self.left,
+            ord('d'): self.right,
+            ord('q'): self.down,
+            ord('e'): self.up,
+        }
+
+    def next_command(self, command):
+        execute = self.commands.get(command)
+        if execute is not None:
+            return execute()
+
+    def down(self):
+        dz = -KeyboardManipulator.delta_move
+        return self.hand.try_delta_move(dz=dz)
+
+    def up(self):
+        dz = KeyboardManipulator.delta_move
+        return self.hand.try_delta_move(dz=dz)
+
+    def left(self):
+        dy = -KeyboardManipulator.delta_move
+        return self.hand.try_delta_move(dy=dy)
+
+    def right(self):
+        dy = KeyboardManipulator.delta_move
+        return self.hand.try_delta_move(dy=dy)
+
+    def backward(self):
+        dx = -KeyboardManipulator.delta_move
+        return self.hand.try_delta_move(dx=dx)
+
+    def forward(self):
+        dx = KeyboardManipulator.delta_move
+        return self.hand.try_delta_move(dx=dx)
