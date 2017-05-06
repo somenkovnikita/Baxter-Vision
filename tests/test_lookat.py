@@ -1,7 +1,8 @@
 # coding=utf-8
 import baxter_interface
 import cv2
-from baxter.hands import HandMover
+
+from baxter.hand import HandMover
 from baxter.translators import CoordinatesTranslator
 
 TEST_NAME = "Test Baxter cubes search(look at)"
@@ -81,15 +82,15 @@ def get_rz(robot_z):
 # Методы перемещения и захвата
 def down():
     global mover, old_z
-    pose = mover._get_current_pose()
-    mover.move(pose, move=True)
+    pose = mover.get_current_pose()
+    mover._move(pose, move=True)
 
 
 def up():
     global mover, old_z
-    pose = mover._get_current_pose()
+    pose = mover.get_current_pose()
     pose[2] = old_z
-    mover.move(pose, move=True)
+    mover._move(pose, move=True)
 
 
 def take():
@@ -115,22 +116,22 @@ def look_at(frame):
     if key == ord("w"):
         x += dc
         print "x =", x
-        mover.move([x, y, z, -3.14, 0.0, 0.0], move=True)
+        mover._move([x, y, z, -3.14, 0.0, 0.0], move=True)
     # A
     elif key == ord("a"):
         y += dc
         print "y =", y
-        mover.move([x, y, z, -3.14, 0.0, 0.0], move=True)
+        mover._move([x, y, z, -3.14, 0.0, 0.0], move=True)
     # S
     elif key == ord("s"):
         x -= dc
         print "x =", x
-        mover.move([x, y, z, -3.14, 0.0, 0.0], move=True)
+        mover._move([x, y, z, -3.14, 0.0, 0.0], move=True)
     # D
     elif key == ord("d"):
         y -= dc
         print "y =", y
-        mover.move([x, y, z, -3.14, 0.0, 0.0], move=True)
+        mover._move([x, y, z, -3.14, 0.0, 0.0], move=True)
     # Вверх\Вниз
     elif key == ord("q"):
         down()
@@ -142,13 +143,13 @@ def look_at(frame):
     # Движение вверх\вниз по z
     elif key == ord("z"):
         z += dc
-        if mover.move([x, y, z, -3.14, 0.0, 0.0], move=True):
+        if mover._move([x, y, z, -3.14, 0.0, 0.0], move=True):
             print "z =", z
         else:
             print "Error z down"
     elif key == ord("x"):
         z -= dc
-        if mover.move([x, y, z, -3.14, 0.0, 0.0], move=True):
+        if mover._move([x, y, z, -3.14, 0.0, 0.0], move=True):
             print "x =", z
         else:
             print "Error x down"
@@ -160,12 +161,12 @@ def look_at(frame):
         print x, y, z, z_px
         lookAt = False
 
-        pose = mover._get_current_pose()
+        pose = mover.get_current_pose()
         pose[0] += x
         pose[1] += y
         pose[2] = z
         print pose
-        mover.move(pose, move=True)
+        mover._move(pose, move=True)
     if cascade:
         pass
     cv2.imshow(TEST_NAME, cframe)

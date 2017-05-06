@@ -83,7 +83,7 @@ def lookat(frame):
         y += dc
         print "y =", y
     elif key == ord("t"):
-        mover.move([0.5, 0.0, 0.1, -3.14, 0.0, 0.0], move=True)
+        mover._move([0.5, 0.0, 0.1, -3.14, 0.0, 0.0], move=True)
     elif lookAt:
         h, w = cframe.shape[:2]
         x = 0.157 / 172 * (y_px - h / 2)
@@ -91,11 +91,11 @@ def lookat(frame):
         print x, y
         lookAt = False
 
-        pose = mover._get_current_pose()
+        pose = mover.get_current_pose()
         pose[0] += x
         pose[1] += y
         print pose
-        mover.move(pose, move=True)
+        mover._move(pose, move=True)
     elif cascade:
         cubes = cascade.detectMultiScale(cframe)
         h, w = cframe.shape[:2]
@@ -110,11 +110,11 @@ def lookat(frame):
             print x, y
             lookAt = False
 
-            pose = mover._get_current_pose()
+            pose = mover.get_current_pose()
             pose[0] += x
             pose[1] += y
             print pose
-            mover.move(pose, move=True)
+            mover._move(pose, move=True)
         for x, y, w, h in cubes:
             p = x, y
             rect = x + w, y + h
