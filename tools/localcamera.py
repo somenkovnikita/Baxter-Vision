@@ -1,57 +1,53 @@
 import cv2
+import numpy
+
+__author__ = 'ddm'
 
 
-# Local camera class D.D.M. 2017(c)
-# Capture image from web camera with OpenCV
 class LocalCamera:
-    CAMERA_ID = 0
-    WIDTH = 640
-    HEIGHT = 480
 
-    capture = None
-    frame = None
-    result = None
-    color = -1
+    default_camera_id = 0
+    default_width = 640
+    default_height = 480
+    default_resolution = default_width, default_height
 
-    def __init__(self, cam_id=CAMERA_ID, localcamera=(WIDTH, HEIGHT)):
+    def __init__(self, camera_id=default_camera_id,
+                 resolution=default_resolution):
+        # type: (LocalCamera, int, tuple) -> None
+        """
+        Initialize camera by index and camera resolution
+        
+        :param camera_id: camera index, by default - default system camera
+        :param resolution: resolution, by default 640x480
+        """
         self.capture = cv2.VideoCapture()
-        self.capture.open(cam_id)
-        # Set params for camera
-        (width, height) = localcamera
+        self.capture.open(camera_id)
+
+        width, height = resolution
         self.capture.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, height)
         self.capture.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
 
         if not self.capture.isOpened():
-            print "LocalCamera: Error camera init"
+            raise IOError("LocalCamera: Error camera init")
 
-    # Read frame from camera
-    def read_frame(self):
-        # Capture frame from camera
-        res, fr = self.capture.read()
-        # Fix mirror effect on frame
-        cv2.flip(fr, 1, fr)
-        self.result = res
-
-        if self.color != -1:
-            self.frame = cv2.cvtColor(fr, self.color)
-        else:
-            self.frame = fr
-
-        return self.result
-
-    # Return current frame from camera
     def get_frame(self):
-        return self.frame
+        # type: (LocalCamera) -> numpy.array
+        """
+        Return next frame from camera flow
+        
+        :return: OpenCV image 
+        """
+        result, frame = self.capture.read()
 
-    # CAMERA PARAMS
-    # Set color for frame
-    def set_color(self, col):
-        self.color = col
+        if not result:
+            raise IOError("LocalCamera: Error read frame")
 
+        return frame
+
+    # WARNING: Params can be unsupported for some web cams
     def set_fps(self, fps):
         self.capture.set(cv2.cv.CV_CAP_PROP_FPS, fps)
 
-    # WARNING: Params can be unsupported for some web cams
     def set_brightness(self, brightness):
         self.capture.set(cv2.cv.CV_CAP_PROP_BRIGHTNESS, brightness)
 
@@ -72,3 +68,6 @@ class LocalCamera:
 
     def free(self):
         self.capture.release()
+
+    def __del__(self):
+        self.free()

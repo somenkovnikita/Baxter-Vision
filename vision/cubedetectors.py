@@ -1,6 +1,6 @@
 import cv2
 
-from vision.interface import ICubeDetector
+from tests.full_cycle_vision import ICubeDetector
 
 
 class CascadeCubeDetector(ICubeDetector):

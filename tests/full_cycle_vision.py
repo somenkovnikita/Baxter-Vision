@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import cv2
 
-from interface import ILetterRecognizer
-from naive_bayes import NaiveBayes
 from tools.image_cutter import ClickChecker
 from tools.maps import ClassMap
+from vision.letterrecognizers import NaiveBayes
 
 """
 Module for cube detecting and letter recognize
@@ -25,7 +24,7 @@ ru_to_en = {
 classmap = ClassMap('config/class_letter.txt')
 cascade = None
 letter_recognizer = None
-clicks =None
+clicks = None
 
 
 def init(config):
@@ -36,7 +35,7 @@ def init(config):
         raise Exception("Cascade not load")
 
     # FIXME: hard code path!
-    ILetterRecognizer.setup_letters('assets/letters/training_set/marked.list')
+    # ILetterRecognizer.setup_letters('assets/letters/training_set/marked.list')
     letter_recognizer = NaiveBayes('p.out')
 
     cv2.namedWindow('Cascade')
@@ -47,6 +46,7 @@ i = 0
 
 def run(frame):
     global cascade, letter_recognizer,i, clicks
+    
     frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     frame2 = cv2.equalizeHist(frame2)
     cv2.imshow('test', frame2)

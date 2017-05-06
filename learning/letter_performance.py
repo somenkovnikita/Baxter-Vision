@@ -3,9 +3,9 @@ import timeit
 from os.path import join
 
 import cv2
-from letterrecognizer.interface import ILetterRecognizer
+from letterrecognizers.interface import ILetterRecognizer
 
-from vision.template import TemplateLetterRecognizer
+from tests.full_cycle_vision import TemplateLetterRecognizer
 
 # FIXME: issue for generalize performance script
 

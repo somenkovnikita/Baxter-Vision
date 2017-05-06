@@ -21,7 +21,7 @@ def get_camera(camera_name):
         return Camera.Camera(parse_baxter_camera(camera_name))
     else:
         from tools.localcamera import LocalCamera
-        return LocalCamera(1)
+        return LocalCamera(0)
 
 
 def simple_show(frame):
@@ -30,7 +30,6 @@ def simple_show(frame):
 
 def run(cam, callback):
     while True:
-        cam.read_frame()
         frame = cam.get_frame()
         frame = cv2.flip(frame, 1)
 
