@@ -7,6 +7,20 @@ Also Baxter now can play with cubes!
 
 How setup and start Baxter(Short Manual)
 
+Recommended only Ubuntu 14.04
+
+**OS**
+
+* Install ROS/Baxter API [from here](http://sdk.rethinkrobotics.com/wiki/Baxter_Setup)
+
+* Enable daemon: avahi-daemon
+
+* Set up Baxter environment: ./baxter.sh
+
+* rosrun -baxter_tools enable_robot.py -e
+
+* Executing own scripts python %SCRIPT_NAME%.py
+
 **Baxter:**
 
 * Connect keyboard
@@ -16,20 +30,3 @@ How setup and start Baxter(Short Manual)
 * Press Alt+F while Baxter loading
 
 * Select Applications -> RSDK GUI
-
-**OS**
-
-* Enable root mode: sudo su
-
-* Enable daemon: avahi-daemon
-
-* Go to "baxter" folder(cd baxter)
-
-* Setup Baxter: ./baxter.sh
-
-* rosrun -baxter_tools enable_robot.py -e
-
-* Executing own scripts python %SCRIPT_NAME%.py
-
-_P.S. Scripts must be located in PYTHONPATH folder_
-
