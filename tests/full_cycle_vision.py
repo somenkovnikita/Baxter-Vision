@@ -3,7 +3,7 @@ import cv2
 
 from tools.image_cutter import ClickChecker
 from tools.maps import ClassMap
-from vision.letterrecognizers import NaiveBayes
+from vision.letterrecognizers import SVMLetterRecognizer
 
 """
 Module for cube detecting and letter recognize
@@ -36,7 +36,7 @@ def init(config):
 
     # FIXME: hard code path!
     # ILetterRecognizer.setup_letters('assets/letters/training_set/marked.list')
-    letter_recognizer = NaiveBayes('p.out')
+    letter_recognizer = SVMLetterRecognizer('config/letter_recognizer.svm')
 
     cv2.namedWindow('Cascade')
     clicks = ClickChecker('Cascade')
@@ -46,45 +46,44 @@ i = 0
 
 def run(frame):
     global cascade, letter_recognizer,i, clicks
-    
-    frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    frame2 = cv2.equalizeHist(frame2)
-    cv2.imshow('test', frame2)
 
     image = frame.copy()
+    image = cv2.flip(image, 1)
     cubes = cascade.detectMultiScale(image)
 
-    letters = list()
+    cutted_cubes = list()
+    cubes_coordinates = list()
+    color = 255, 255, 0
     for x, y, w, h in cubes:
         start = x, y
         end = x + w, y + h
-        color = 255, 255, 0
 
-        cutted_cube = frame[y: y + h, x: x + w]
+        cutted_cube = image[y: y + h, x: x + w]
 
         if cutted_cube.size:
-            class_ = letter_recognizer.letter(cutted_cube)[0]
-            letter = classmap.get_letter(class_)
-            letter = ru_to_en.get(letter)
-            font, scale = cv2.FONT_HERSHEY_SIMPLEX, 1
-            cv2.putText(image, letter, start, font, scale, color)
-            letters.append(letter)
+            cutted_cubes.append(cutted_cube)
+            cubes_coordinates.append((x, y, x + w, y + h))
 
         cv2.rectangle(image, start, end, color, 2)
 
+    letters = list()
+    if cutted_cubes:
+        letters = letter_recognizer.letters(cutted_cubes)
+
+    for i, cutted_cube in enumerate(cubes_coordinates):
+        start = tuple(cutted_cube[:2])
+        class_ = letters[i]
+        letter = classmap.get_letter(class_)
+        letter = ru_to_en.get(letter)
+        font, scale = cv2.FONT_HERSHEY_SIMPLEX, 1
+        try:
+            cv2.putText(image, letter, start, font, scale, color)
+        except Exception as e:
+            print e, letter, start, font, scale, color
+            raise e
+
     if len(cubes) > 0:
         found = " ".join(map(str, letters))
-        print "Found %d rectangle(s)" % len(cubes), "r",  found
+        print "Found %d rectangle(s)" % len(cubes), found
 
     cv2.imshow("Cascade", image)
-    #
-    # cls = clicks.get_clicks()
-    # if cls:
-    #     print cls
-    #
-    # for cx, cy in cls:
-    #     for x, y, w, h in cubes:
-    #         cutted_cube = frame[y: y + h, x: x + w]
-    #         if x <= cx <= x + w and y <= cy <= y + h:
-    #             cv2.imwrite(str(i) + '.jpg', cutted_cube)
-    #             i += 1

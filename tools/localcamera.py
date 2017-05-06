@@ -22,6 +22,7 @@ class LocalCamera:
         """
         self.capture = cv2.VideoCapture()
         self.capture.open(camera_id)
+        self.resolution = resolution
 
         width, height = resolution
         self.capture.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, height)
@@ -40,7 +41,7 @@ class LocalCamera:
         result, frame = self.capture.read()
 
         if not result:
-            raise IOError("LocalCamera: Error read frame")
+            return numpy.zeros(shape=self.resolution)
 
         return frame
 

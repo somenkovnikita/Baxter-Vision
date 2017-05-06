@@ -42,7 +42,7 @@ def load_dataset(dataset_dir):
 
 
 if __name__ == '__main__' :
-    DEFAULT_CONFIG = os.path.join('config', 'letter.bayesmodel')
+    DEFAULT_CONFIG = os.path.join('config', 'letter_recognizer.svm')
 
     parser = argparse.ArgumentParser(description='Train naive bayes model')
 

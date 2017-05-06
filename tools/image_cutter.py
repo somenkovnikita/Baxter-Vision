@@ -1,8 +1,15 @@
 import argparse
-import os
+from imghdr import what as isimage
+from os import listdir
+from os.path import isfile, join, abspath
 
 import cv2
 
+
+def collect_images(basedir):
+    full_path = abspath(basedir)
+    all_files = (join(full_path, fn) for fn in listdir(basedir))
+    return [fn for fn in all_files if isfile(fn) and isimage(fn)]
 
 class Cutter:
     """Class create window for cut image"""
@@ -62,15 +69,14 @@ class Cutter:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Cut images into square for create dataset')
 
-    parser.add_argument('-i', '--filepaths', required=True,
+    parser.add_argument('-i', '--input_dir', required=True,
                         help='File with paths to images')
-    parser.add_argument('-o', '--outpath', required=True,
+    parser.add_argument('-o', '--output_dir', required=True,
                         help='Directory for save cutted images')
     args = parser.parse_args()
 
-    with open(args.filepaths) as file_paths:
-        paths = (path.strip() for path in file_paths)
-        images = map(cv2.imread, paths)
+    paths = collect_images(args.input_dir)
+    images = map(cv2.imread, paths)
 
     base = 0
     for image in images:
@@ -78,7 +84,7 @@ if __name__ == '__main__':
         squares = cutter.run()
         scale = cutter.get_scale()
         for i, square in enumerate(squares):
-            fn = os.path.join(args.outpath, str(base + i) + '.png')
+            fn = join(args.output_dir, str(base + i) + '.png')
             s = list(int(round(ss / scale)) for ss in square)
             cv2.imwrite(fn, image[s[1]:s[3], s[0]:s[2]])
         base += len(squares)

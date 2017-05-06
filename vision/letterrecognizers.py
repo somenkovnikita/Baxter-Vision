@@ -5,26 +5,45 @@ from sklearn.externals import joblib
 from interface import ILetterRecognizer
 
 
-class NaiveBayes(ILetterRecognizer):
+class SVMLetterRecognizer(ILetterRecognizer):
+    """
+    Support Vector Machine
+    See description of override method in interface
+    """
+    image_size = 25, 25
+
     def __init__(self, config_file):
-        self._model = joblib.load(config_file)
+        # type: (SVMLetterRecognizer, str) -> None
+        """
+        Load pre trained config
+        
+        :param config_file: file path with pre trained model
+        """
+        self._svm_model = joblib.load(config_file)
 
     def letters(self, images):
-        pass
+        processing = SVMLetterRecognizer.preprocessing
+        processed_images = np.array(map(processing, images))
+        return self._svm_model.predict(processed_images)
 
     def letter(self, image):
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        processed_image = SVMLetterRecognizer.preprocessing(image)
+        return self._svm_model.predict(np.array([processed_image]))[0]
+
+    @staticmethod
+    def preprocessing(image):
+        # type: (np.array) -> np.array
+        """
+        Prepare image to recognize
+         
+        :param image: OpenCV image to prepare
+        :return: prepared OpenCV image 
+        """
+        if image.shape[2] == 3:
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = cv2.equalizeHist(image)
-
-        image = cv2.resize(image, (25, 25))
-
-        # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
-
-        img = np.array([image.flatten().astype(float) / 255.0])
-        return self._model.predict(img)
-
-    def preproc(self, image):
-        pass
+        image = cv2.resize(image, SVMLetterRecognizer.image_size)
+        return image.flatten().astype(float) / 255.0
 
 
 class TemplateLetterRecognizer(ILetterRecognizer):
