@@ -9,6 +9,7 @@ This script calibrate your Baxter to set up:
 
 
 def default_position():
+    
     pass
 
 
