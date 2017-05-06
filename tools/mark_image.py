@@ -15,9 +15,8 @@ Output format:
 """
 
 
-def mark_images(basedir):
+def mark_images(basedir, mapper):
     results = list()
-    mapper = ClassMap('config/class_letter.txt')
     for filename in collect_images(basedir):
         image = cv2.imread(filename)
         resized = cv2.resize(image, (100, 100))
@@ -36,12 +35,15 @@ if __name__ == '__main__':
 
     parser.add_argument('-i', '--input_dir', help='Input dir for work', default='.')
     parser.add_argument('-o', '--output_file', help='Output file path *.list')
+    parser.add_argument('-m', '--map_path', default='config/class_letter.txt',
+                        help='File with matches number of class and class')
 
     args = parser.parse_args()
     if args.output_file is None:
         args.output_file = join(args.input_dir, 'marked.list')
 
-    makred = mark_images(args.input_dir)
+    mapper = ClassMap(args.map_path)
+    makred = mark_images(args.input_dir, mapper)
     with codecs.open(args.output_file, 'w', encoding='utf-8') as mark_file:
         for line in makred:
             mark_file.write(' '.join(line) + '\n')
