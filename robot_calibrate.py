@@ -1,4 +1,6 @@
-# from baxter.hand import KeyboardManipulator
+import rospy
+
+from baxter.hand import KeyboardManipulator
 
 """
 This script calibrate your Baxter to set up:
@@ -11,7 +13,7 @@ This script calibrate your Baxter to set up:
 
 class RobotCalibrator:
     def __init__(self, limb):
-        self.manipulator = None #KeyboardManipulator(limb)
+        self.manipulator = KeyboardManipulator(limb)
 
     def default_position(self):
         pose = self.manipulator.listen()
@@ -34,6 +36,12 @@ class RobotCalibrator:
 
 
 def robot_calibrate(limb):
+    """
+    Calibrating limb for normal work controller.py
+    
+    :param limb: aim limb for calibrate
+    :return: calibrated params as tuple 
+    """
     print '__________                  __'
     print '\______   \_____  ___  ____/  |_  ___________'
     print '|    |  _/\__  \ \  \/  /\   __\/ __ \_  __ \\'
@@ -60,5 +68,6 @@ def robot_calibrate(limb):
     limb_height = calibrator.limb_height_table()
 
 
-
-robot_calibrate(1)
+if __name__ == '__main__':
+    rospy.init_node('calibrating')
+    robot_calibrate('left')

@@ -2,6 +2,7 @@
 
 import baxter_interface
 import cv2
+import rospy
 import tf
 from baxter_core_msgs.srv import SolvePositionIK
 from baxter_core_msgs.srv import SolvePositionIKRequest
@@ -116,13 +117,15 @@ class KeyboardManipulator:
     esc_key = 27
 
     def __init__(self, limb):
-        # type: (HandMover, str) -> None
+        # type: (str) -> None
         """
         Choose limb to manipulator
 
         :param limb: 'right' or 'left' limb 
         """
+        from camera import Camera
         self.hand = HandMover(limb)
+        self.camera = Camera(limb + '_hand')
         self.commands = {
             ord('w'): self.forward,
             ord('s'): self.backward,
@@ -134,6 +137,8 @@ class KeyboardManipulator:
 
     def listen(self):
         while True:
+            frame = self.camera.get_frame()
+            cv2.imshow('Calibrate, suka!', frame)
             command = cv2.waitKey(20) & 0xFF
             if command == KeyboardManipulator.esc_key:
                 break
