@@ -120,7 +120,6 @@ class PerceptronLetterRecognizer(ILetterRecognizer):
     # values fparam1=0 and fparam2=0 then the function used is y = 1.7159*tanh(2/3 * x),
     # so the output will range from [-1.7159, 1.7159], instead of [0,1].
 
-
     # Setup image for neural network
     def prepare_image(self, image):
         prepared = cv2.resize(image, self._size)
