@@ -1,6 +1,6 @@
 import cv2
 
-from tests.full_cycle_vision import ICubeDetector
+from interface import ICubeDetector
 
 
 class CascadeCubeDetector(ICubeDetector):
@@ -8,7 +8,7 @@ class CascadeCubeDetector(ICubeDetector):
 
     def __init__(self, cascade_config):
         self.cascade = cv2.CascadeClassifier()
-        if self.cascade.load(cascade_config):
+        if not self.cascade.load(cascade_config):
             raise IOError('Config file %s is not valid!', cascade_config)
 
     def cubes(self, image):

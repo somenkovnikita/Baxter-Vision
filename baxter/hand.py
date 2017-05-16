@@ -26,6 +26,8 @@ class HandMover:
         self.limb = limb
         self.limb_interface = baxter_interface.Limb(limb)
         self.pose = self.get_current_pose()
+        self.pose[3:] = [-3.14, 0.0, 0.0]
+        self._move(self.pose, move=True)
 
     def try_move(self, x=None, y=None, z=None):
         # type: (HandMover, float, float, float) -> bool
@@ -113,7 +115,7 @@ class HandMover:
 
 
 class KeyboardManipulator:
-    delta_move = 0.01
+    delta_move = 0.05
     esc_key = 27
 
     def __init__(self, limb):

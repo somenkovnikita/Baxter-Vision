@@ -14,11 +14,15 @@ def prepare_images(paths):
         image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         image = cv2.equalizeHist(image)
 
-        image = cv2.resize(image, (25, 25))
+        try:
+            image = cv2.resize(image, (25, 25))
+            images.append(image.flatten().astype(float) / 255.0)
+        except cv2.error as e:
+            pass
         # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 29, 0)
         # cv2.imshow('1,', image)
         # cv2.waitKey()
-        images.append(image.flatten().astype(float) / 255.0)
+
     return np.array(images)
 
 
@@ -42,11 +46,13 @@ def load_dataset(dataset_dir):
 
 
 if __name__ == '__main__' :
-    DEFAULT_CONFIG = os.path.join('config', 'letter_recognizer.svm')
+    DEFAULT_CONFIG = os.path.join('config', 'letter_recognizer.bayes')
 
     parser = argparse.ArgumentParser(description='Train naive bayes model')
 
     parser.add_argument('-i', '--input_dir', required=True,
+                        help='Directory with dataset with market.list')
+    parser.add_argument('-t', '--test_dir',
                         help='Directory with dataset with market.list')
     parser.add_argument('-o', '--output_dir', default=DEFAULT_CONFIG,
                         help='Specify file path to save model')
@@ -61,7 +67,13 @@ if __name__ == '__main__' :
     model = GaussianNB()
     model.fit(inputs, outputs)
 
-    preds = model.predict(inputs)
-    print classification_report(outputs, preds)
+    if args.test_dir:
+        paths, classes = load_dataset(args.test_dir)
 
-    joblib.dump(model, 'p.out')
+        inputs = prepare_images(paths)
+        outputs = prepare_classes(classes, 30)
+        
+        preds = model.predict(inputs)
+        print classification_report(outputs, preds)
+
+    joblib.dump(model, args.output_dir)

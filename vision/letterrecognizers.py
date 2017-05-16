@@ -39,9 +39,14 @@ class SVMLetterRecognizer(ILetterRecognizer):
         :param image: OpenCV image to prepare
         :return: prepared OpenCV image 
         """
-        if image.shape[2] == 3:
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        image = cv2.equalizeHist(image)
+        
+        channel_b, channel_g, channel_r = cv2.split(image)
+        channel_b = cv2.equalizeHist(channel_b)
+        channel_g = cv2.equalizeHist(channel_g)
+        channel_r = cv2.equalizeHist(channel_r)
+        cv2.merge((channel_b, channel_g, channel_r), image)
+
+        image = cv2.medianBlur(image, 7)
         image = cv2.resize(image, SVMLetterRecognizer.image_size)
         return image.flatten().astype(float) / 255.0
 
@@ -104,6 +109,10 @@ class TemplateLetterRecognizer(ILetterRecognizer):
             self._templates.append(template)
             self._classes.append(letter)
 
+class CaffeDeepNetwork(ILetterRecognizer):
+    def __init__(self, weights):
+        pass
+    
 
 class PerceptronLetterRecognizer(ILetterRecognizer):
     def __init__(self, config_file):

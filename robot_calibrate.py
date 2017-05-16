@@ -61,13 +61,16 @@ def robot_calibrate(limb):
     print 'Set up height of table and press ESC'
     height = calibrator.height_table()
 
-    print 'Set up borders of the table and press ESC'
-    borders = calibrator.borders_table()
+    # print 'Set up borders of the table and press ESC'
+    # borders = calibrator.borders_table()
 
     print 'Set up limb height from table and press ESC'
     limb_height = calibrator.limb_height_table()
 
+    return position, height,  limb_height
+
 
 if __name__ == '__main__':
     rospy.init_node('calibrating')
-    robot_calibrate('left')
+    result = robot_calibrate('left')
+
