@@ -93,7 +93,29 @@ class RobotController:
             return letters.index(letter_class)
 
     def aim_to(self, aim):
-        self.hand.try_delta_move(0)
+        """
+        The robot's arm becomes above the target
+        
+        :param aim: coordinates aim 
+        :return: True if move success False otherwise
+        """
+        # TODO: delete this const
+        aim_w_percent = 0.56
+        aim_h_percent = 0.45
+        robot_to_px = 0.157
+
+        w, h = self.camera.resolution
+        aim_x = int(round(aim_w_percent * w))
+        aim_y = int(round(aim_h_percent * h))
+
+        pose = self.hand.get_current_pose()
+        # TODO: delete this const
+        z_px = -330.0 * pose[2] + 201.0
+
+        dx = robot_to_px * (aim[0] - aim_y) / z_px
+        dy = robot_to_px * (aim[1] - aim_x) / z_px
+
+        return self.hand.try_delta_move(dx=dx, dy=dy)
 
     def take(self):
         self.hand.try_move(z=self.start_pose[2])
@@ -149,4 +171,6 @@ if __name__ == "__main__":
 
     arguments = parser.parse_args()
 
-    # start_controller(arguments.word)
+    robot = RobotController('config/controller.ini')
+    robot.aim_to((0.2, 0.3))
+    robot.take()
