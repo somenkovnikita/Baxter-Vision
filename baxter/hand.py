@@ -14,7 +14,7 @@ from moveit_commander import conversions
 
 class HandMover:
     """
-    Class for kinematics calculate for moving robot limb in plane table 
+    Class for kinematics calculate for moving robot limb in plane table
     """
     def __init__(self, limb):
         # type: (HandMover, str) -> None
@@ -25,6 +25,8 @@ class HandMover:
         """
         self.limb = limb
         self.limb_interface = baxter_interface.Limb(limb)
+        self.gripper = baxter_interface.Gripper(limb)
+        self.gripper.reset_custom_state()
         self.pose = self.get_current_pose()
         self.pose[3:] = [-3.14, 0.0, 0.0]
         self._move(self.pose, move=True)
@@ -76,6 +78,12 @@ class HandMover:
         euler = tf.transformations.euler_from_quaternion(quaternion)
 
         return [position[0], position[1], position[2], euler[0], euler[1], euler[2]]
+
+    def set_gripper(self, command):
+        
+
+
+
 
     def _move(self, rpy_pose, move=False):
         quaternion_pose = conversions.list_to_pose_stamped(rpy_pose, "base")
