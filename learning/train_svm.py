@@ -11,6 +11,10 @@ from vision.letterrecognizers import SVMLetterRecognizer
 
 
 def prepare_images(paths):
+    for p in paths:
+        i = cv2.imread(p)
+        if i is None:
+            pass
     images = map(cv2.imread, paths)
     processing = SVMLetterRecognizer.preprocessing
     return map(processing, images)

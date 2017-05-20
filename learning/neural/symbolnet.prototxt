@@ -12,11 +12,10 @@ layer {
   }
   image_data_param {
     source: "assets/letters/training_set/marked_neural.list"
-    batch_size: 128
+    batch_size: 32
     shuffle: true
     new_height: 28
     new_width: 28
-
   }
 }
 layer {
@@ -32,7 +31,7 @@ layer {
   }
   image_data_param {
     source: "assets/letters/test_set/marked_neural.list"
-    batch_size: 128
+    batch_size: 32
     new_height: 28
     new_width: 28
     shuffle: true
@@ -47,7 +46,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   convolution_param {
     num_output: 60
@@ -81,7 +80,7 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   convolution_param {
     num_output: 150
@@ -115,10 +114,10 @@ layer {
     lr_mult: 1
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   inner_product_param {
-    num_output: 1500
+    num_output: 500
     weight_filler {
       type: "xavier"
     }
@@ -139,10 +138,10 @@ layer {
   bottom: "ip1"
   top: "ip2"
   param {
-    lr_mult: 1
+    lr_mult: 0
   }
   param {
-    lr_mult: 2
+    lr_mult: 1
   }
   inner_product_param {
     num_output: 30

@@ -4,7 +4,6 @@ from baxter.hand import KeyboardManipulator
 
 """
 This script calibrate your Baxter to set up:
-    * height of table  
     * borders of the table
     * default position
     * limb height from table 

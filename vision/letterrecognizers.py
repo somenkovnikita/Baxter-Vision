@@ -39,7 +39,7 @@ class SVMLetterRecognizer(ILetterRecognizer):
         :param image: OpenCV image to prepare
         :return: prepared OpenCV image 
         """
-        
+
         channel_b, channel_g, channel_r = cv2.split(image)
         channel_b = cv2.equalizeHist(channel_b)
         channel_g = cv2.equalizeHist(channel_g)
@@ -51,16 +51,39 @@ class SVMLetterRecognizer(ILetterRecognizer):
         return image.flatten().astype(float) / 255.0
 
 
+class CaffeNeural(ILetterRecognizer):
+    def __init__(self, model, weights):
+        import caffe
+
+        caffe.set_mode_gpu()
+        caffe.set_device(0)
+
+        self.net = caffe.Net(model, weights, caffe.TEST)
+
+    def letters(self, images):
+        return map(self.letter, images)
+
+    def letter(self, image):
+        import caffe
+
+        transformer = caffe.io.Transformer({'data': (1, image.shape[2], image.shape[0], image.shape[1])})
+        transformer.set_transpose('data', (2, 0, 1))  # To reshape from (H, W, C) to (C, H, W) ...
+        transformer.set_raw_scale('data', 1 / 256.)  # To scale to [0, 1] ...
+        self.net.blobs['data'].data[...] = transformer.preprocess('data', image)
+        res = self.net.forward()
+        return np.argmax(res['loss'][0])
+
+
 class TemplateLetterRecognizer(ILetterRecognizer):
     default_width, default_height = 25, 25
     default_size = (default_width, default_height)
-    default_method = cv2.cv.CV_TM_SQDIFF_NORMED
+    default_method = 1#cv2.cv.CV_TM_SQDIFF_NORMED
     default_threshold = 0.5
     methods = {
         # read OpenCV docs for description
-        cv2.cv.CV_TM_CCORR_NORMED,
-        cv2.cv.CV_TM_CCOEFF_NORMED,
-        cv2.cv.CV_TM_SQDIFF_NORMED
+        # cv2.cv.CV_TM_CCORR_NORMED,
+        # cv2.cv.CV_TM_CCOEFF_NORMED,
+        # cv2.cv.CV_TM_SQDIFF_NORMED
     }
 
     def __init__(self, size=default_size, method=default_method, threshold=default_threshold):

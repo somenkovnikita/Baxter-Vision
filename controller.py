@@ -92,9 +92,20 @@ class RobotController:
             print 'Found', aim_letter, 'letter'
             return letters.index(letter_class)
 
-    def move_cube(self, from_aim, to_aim):
+    def aim_to(self, aim):
+        self.hand.try_delta_move(0)
 
-        pass
+    def take(self):
+        self.hand.try_move(z=self.start_pose[2])
+
+    def give_back(self):
+        self.hand.try_move(z=self.start_pose[2])
+
+    def move_cube(self, from_aim, to_aim):
+        self.aim_to(from_aim)
+        self.take()
+        self.aim_to(to_aim)
+        self.give_back()
 
     def set_letter_detector(self, letter_recognizer):
         # type: (ILetterRecognizer) -> None
