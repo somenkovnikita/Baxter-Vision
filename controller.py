@@ -1,6 +1,11 @@
+# -*- coding: utf8 -*-
+
 import ConfigParser
 import argparse
 import random
+import signal
+import rospy
+import os
 
 from baxter.camera import Camera
 from baxter.hand import HandMover
@@ -22,8 +27,13 @@ class RobotController:
         
         :param ini_file: robot file config 
         """
+
+
         parser = ConfigParser.ConfigParser()
         parser.read(ini_file)
+        import os
+
+        print 'loading config...', parser.sections()
 
         cube_detector = parser.get('vision', 'cube_detector')
         cube_detector_config = parser.get('vision', 'cube_detector_config')
@@ -38,10 +48,11 @@ class RobotController:
         class_map = parser.get('vision', 'class_map')
         self.alphabet = ClassMap(class_map)
 
-        start_position = parser.get('position', 'start_position')
+        start_position = parser.get('positions', 'start_position')
         self.start_pose = map(float, start_position.split(';'))
+        self.height_plane = float(parser.get('positions', 'height_plane'))
 
-        hand = parser.get('position', 'hand')
+        hand = parser.get('positions', 'hand')
         self.hand = HandMover(hand)
         self.camera = Camera(hand + '_hand')
 
@@ -54,17 +65,32 @@ class RobotController:
         :return: True if word suc
         """
         for letter in word:
-            cubes, rects = self.find_cubes()
-            letters = self.find_letter(cubes, cubes)
-            self.move_cube()
+            index = None
+            while True:
+                cubes, rects = self.find_cubes()
+                index = self.find_letter(cubes, letter)
+                if not index:
+                    continue
+                aim_from = rects[index]
+                cx = aim_from[0] + aim_from[2] / 2
+                cy = aim_from[1] + aim_from[3] / 2
+                print cx, cy, aim_from
+                self.aim_to((cy, cx))
+                self.take()
+                self.give_back()
+                break
+
+            # self.move_cube()
 
     def set_start_pose(self):
         self.hand.try_move(*self.start_pose)
 
     def random_move(self):
-        dx = random.random()
-        dy = random.random()
-        self.hand.try_delta_move(dx, dy)
+        while True:
+            dx = 2.0 * random.random() - 1.0
+            dy = 2.0 * random.random() - 1.0
+            if self.hand.try_move(dx, dy):
+                break
 
     def find_cubes(self):
         for attempt in range(20):
@@ -77,11 +103,11 @@ class RobotController:
                 x, y, h, w = rect
                 return frame[y: y + h, x: x + w]
 
-            if cubes:
+            if len(cubes) != 0:
                 print 'Found %d cubes' % len(cubes)
                 return map(cutter, cubes), cubes
 
-            self.random_move()
+            # self.random_move()
         raise Exception('Cubes not find!')
 
     def find_letter(self, cubes_image, aim_letter):
@@ -100,6 +126,8 @@ class RobotController:
         :return: True if move success False otherwise
         """
         # TODO: delete this const
+
+        print 'aim to', aim
         aim_w_percent = 0.56
         aim_h_percent = 0.45
         robot_to_px = 0.157
@@ -118,10 +146,17 @@ class RobotController:
         return self.hand.try_delta_move(dx=dx, dy=dy)
 
     def take(self):
-        self.hand.try_move(z=self.start_pose[2])
+        pose = self.hand.get_current_pose()
+        print self.hand.set_gripper(True)
+        print self.hand.try_move(z=self.height_plane)
+        print self.hand.set_gripper(False)
+        print self.hand.try_move(z=pose[2])
 
     def give_back(self):
-        self.hand.try_move(z=self.start_pose[2])
+        pose = self.hand.get_current_pose()
+        print self.hand.try_move(z=self.height_plane)
+        print self.hand.set_gripper(True)
+        print self.hand.try_move(z=pose[2])
 
     def move_cube(self, from_aim, to_aim):
         self.aim_to(from_aim)
@@ -170,7 +205,42 @@ if __name__ == "__main__":
                         help='Config with info about detectors, start positions e.t')
 
     arguments = parser.parse_args()
+    rospy.init_node('cube_puzzle2')
 
-    robot = RobotController('config/controller.ini')
-    robot.aim_to((0.2, 0.3))
-    robot.take()
+    import cv2
+
+    import sys
+
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
+
+    robot = RobotController(arguments.config)
+
+    from tools.image_cutter import ClickChecker
+    cv2.namedWindow('df')
+    clicker = ClickChecker('df')
+
+    while True:
+        frame = robot.camera.get_frame()
+        cv2.imshow('df', frame)
+        key = cv2.waitKey(1) & 0xff
+        if key == 27:
+            break
+        if key == ord('w'):
+            robot.take()
+        if key == ord('t'):
+            robot.give_back()
+        if key == ord('l'):
+            robot.make_word(arguments.word.decode())
+        if key == ord('r'):
+            robot.random_move()
+        c = clicker.get_clicks()
+        for cc in c:
+            robot.aim_to(cc[::-1])
+
+    os.kill(os.getpid(), signal.SIGINT)
+
+    rospy.spin()
+
+    # robot.take()

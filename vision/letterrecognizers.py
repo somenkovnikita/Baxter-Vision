@@ -24,7 +24,7 @@ class SVMLetterRecognizer(ILetterRecognizer):
     def letters(self, images):
         processing = SVMLetterRecognizer.preprocessing
         processed_images = np.array(map(processing, images))
-        return self._svm_model.predict(processed_images)
+        return list(self._svm_model.predict(processed_images))
 
     def letter(self, image):
         processed_image = SVMLetterRecognizer.preprocessing(image)

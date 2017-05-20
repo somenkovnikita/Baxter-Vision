@@ -26,13 +26,14 @@ class HandMover:
         self.limb = limb
         self.limb_interface = baxter_interface.Limb(limb)
         self.gripper = baxter_interface.Gripper(limb)
-        self.gripper.reset_custom_state()
+        self.gripper.reset()
+        self.gripper.calibrate()
         self.pose = self.get_current_pose()
         self.pose[3:] = [-3.14, 0.0, 0.0]
         self._move(self.pose, move=True)
 
     def try_move(self, x=None, y=None, z=None):
-        # type: (HandMover, float, float, float) -> bool
+        # type: (float, float, float) -> bool
         """
         Calculate kinematics and try moving limb
         
@@ -49,7 +50,7 @@ class HandMover:
         return self._move(rpy_pose, move=True)
 
     def try_delta_move(self, dx=None, dy=None, dz=None):
-        # type: (HandMover, float, float, float) -> bool
+        # type: (float, float, float) -> bool
         """
         Calculate kinematics and try moving relative to the current limb point 
 
@@ -66,7 +67,7 @@ class HandMover:
         return self._move(rpy_pose, move=True)
 
     def get_current_pose(self):
-        # type: (HandMover) -> list
+        # type: () -> list
         """
         Return current Baxter pose 
         
@@ -80,12 +81,13 @@ class HandMover:
         return [position[0], position[1], position[2], euler[0], euler[1], euler[2]]
 
     def set_gripper(self, command):
-        
-
-
-
+        if command is True:
+            self.gripper.open()
+        elif command is False:
+            self.gripper.close()
 
     def _move(self, rpy_pose, move=False):
+        print 'move:', rpy_pose
         quaternion_pose = conversions.list_to_pose_stamped(rpy_pose, "base")
 
         node = "ExternalTools/" + self.limb + "/PositionKinematicsNode/IKService"
@@ -106,7 +108,6 @@ class HandMover:
             else:
                 self.limb_interface.set_joint_positions(limb_joints)
             return True
-
         else:
             return False
 
