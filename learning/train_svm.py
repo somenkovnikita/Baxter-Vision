@@ -1,5 +1,6 @@
 import argparse
 import os
+import random
 
 import cv2
 import numpy as np
@@ -21,7 +22,7 @@ def prepare_images(paths):
 
 
 def prepare_classes(classes):
-    return np.array(map(int, classes))
+    return map(int, classes)
 
 
 def load_dataset(dataset_dir):
@@ -41,10 +42,16 @@ def prepare_inputs_outputs(config):
     print 'Reading dataset...'
 
     paths, classes = load_dataset(config)
+
     inputs = prepare_images(paths)
     outputs = prepare_classes(classes)
 
-    return inputs, outputs
+    idcs = range(len(inputs))
+    random.shuffle(idcs)
+    random_inputs = [inputs[i] for i in idcs]
+    random_outputs = [outputs[i] for i in idcs]
+
+    return random_inputs, np.array(random_outputs)
 
 
 if __name__ == '__main__' :
@@ -64,12 +71,7 @@ if __name__ == '__main__' :
 
     model = LinearSVC()
     inputs, outputs = prepare_inputs_outputs(args.training_set)
-    # for input_ in inputs:
-    #     s = SVMLetterRecognizer.image_size
-    #     i = input_.copy()
-    #     im = i.reshape(s)
-    #     cv2.imshow('Visual Inputs', im)
-    #     cv2.waitKey()
+
     model.fit(inputs, outputs)
 
     if args.test_set:

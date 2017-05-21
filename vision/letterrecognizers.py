@@ -42,11 +42,21 @@ class SVMLetterRecognizer(ILetterRecognizer):
 
         channel_b, channel_g, channel_r = cv2.split(image)
         channel_b = cv2.equalizeHist(channel_b)
+        ret, channel_b = cv2.threshold(channel_b, 127, 255, cv2.THRESH_TRUNC)
         channel_g = cv2.equalizeHist(channel_g)
+        ret, channel_g = cv2.threshold(channel_g, 127, 255, cv2.THRESH_TRUNC)
         channel_r = cv2.equalizeHist(channel_r)
+        ret, channel_r = cv2.threshold(channel_r, 127, 255, cv2.THRESH_TRUNC)
         cv2.merge((channel_b, channel_g, channel_r), image)
 
-        image = cv2.medianBlur(image, 7)
+        s = 0.2
+        kern = np.array([
+            [-0.0375 - 0.05 * s, -0.0375 - 0.05 * s, -0.0375 - 0.05 * s],
+            [-0.0375 - 0.05 * s, 1.3 + 0.4 * s, -0.0375 - 0.05 * s],
+            [-0.0375 - 0.5 * s, -0.0375 - 0.5 * s, -0.0375 - 0.5 * s],
+        ])
+
+        image = cv2.filter2D(image, cv2.CV_8U, kern)
         image = cv2.resize(image, SVMLetterRecognizer.image_size)
         return image.flatten().astype(float) / 255.0
 

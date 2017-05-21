@@ -2,10 +2,11 @@
 
 import ConfigParser
 import argparse
+import os
 import random
 import signal
+
 import rospy
-import os
 
 from baxter.camera import Camera
 from baxter.hand import HandMover
@@ -27,11 +28,8 @@ class RobotController:
         
         :param ini_file: robot file config 
         """
-
-
         parser = ConfigParser.ConfigParser()
         parser.read(ini_file)
-        import os
 
         print 'loading config...', parser.sections()
 
