@@ -1,0 +1,258 @@
+name: "CubeNet"
+layer {
+  name: "cube-rbg"
+  type: "ImageData"
+  top: "data"
+  top: "label"
+    transform_param {
+    scale: 0.00390625
+  }
+  image_data_param {
+    source: "assets/letters/training_set/marked_neural.list"
+    batch_size: 32
+    shuffle: true
+    new_height: 28
+    new_width: 28
+  }
+  include: { phase: TRAIN }
+}
+layer {
+  name: "cube-rbg"
+  type: "ImageData"
+  top: "data"
+  top: "label"
+    transform_param {
+    scale: 0.00390625
+  }
+  image_data_param {
+    source: "assets/letters/test_set/marked_neural.list"
+    batch_size: 32
+    new_height: 28
+    new_width: 28
+    shuffle: true
+  }
+  include: { phase: TEST }
+}
+
+layer {
+  bottom: "data"
+  top: "conv1/5x5_s1"
+  name: "conv1/5x5_s1"
+  type: "Convolution"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 5
+    stride: 1
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      std: 0.0001
+    }
+  }
+}
+layer {
+  bottom: "conv1/5x5_s1"
+  top: "conv1/5x5_s1"
+  name: "conv1/relu_5x5"
+  type: "ReLU"
+}
+layer {
+  bottom: "conv1/5x5_s1"
+  top: "pool1/3x3_s2"
+  name: "pool1/3x3_s2"
+  type: "Pooling"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+
+layer {
+  bottom: "pool1/3x3_s2"
+  top: "conv2/5x5_s1"
+  name: "conv2/5x5_s1"
+  type: "Convolution"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 5
+    stride: 1
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      std: 0.01
+    }
+  }
+}
+layer {
+  bottom: "conv2/5x5_s1"
+  top: "conv2/5x5_s1"
+  name: "conv2/relu_5x5"
+  type: "ReLU"
+}
+layer {
+  bottom: "conv2/5x5_s1"
+  top: "pool2/3x3_s2"
+  name: "pool2/3x3_s2"
+  type: "Pooling"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  bottom: "pool2/3x3_s2"
+  top: "conv3/5x5_s1"
+  name: "conv3/5x5_s1"
+  type: "Convolution"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    stride: 1
+    pad: 2
+    weight_filler {
+      type: "xavier"
+      std: 0.01
+    }
+  }
+}
+layer {
+  bottom: "conv3/5x5_s1"
+  top: "conv3/5x5_s1"
+  name: "conv3/relu_5x5"
+  type: "ReLU"
+}
+layer {
+  bottom: "conv3/5x5_s1"
+  top: "pool3/3x3_s2"
+  name: "pool3/3x3_s2"
+  type: "Pooling"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+
+# output
+layer{
+  bottom: "pool3/3x3_s2"
+  top: "ip1/3072"
+  name: "ip1/3072"
+  type: "InnerProduct"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 3072
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  bottom: "ip1/3072"
+  top: "ip1/3072"
+  name: "ip1/relu_5x5"
+  type: "ReLU"
+}
+layer {
+  bottom: "ip1/3072"
+  top: "ip2/2048"
+  name: "ip2/2048"
+  type: "InnerProduct"
+param { #weights
+  lr_mult: 0
+  decay_mult: 1
+}
+param { #bias
+  lr_mult: 0
+  decay_mult: 0
+}
+  inner_product_param {
+    num_output: 2048
+    weight_filler {
+      type: "xavier"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  bottom: "ip2/2048"
+  top: "ip2/2048"
+  name: "ip2/relu_5x5"
+  type: "ReLU"
+}
+layer {
+  bottom: "ip2/2048"
+  top: "ip3/30"
+  name: "ip3/30"
+  type: "InnerProduct"
+   param { #weights
+  lr_mult: 0
+  decay_mult: 1
+}
+param { #bias
+  lr_mult: 0
+  decay_mult: 0
+}
+  inner_product_param {
+    num_output: 30
+    weight_filler {
+      type: "xavier"
+      std: 0.1
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip3/30"
+  bottom: "label"
+  top: "accuracy"
+  include: { phase: TEST }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip3/30"
+  bottom: "label"
+  top: "loss"
+}
