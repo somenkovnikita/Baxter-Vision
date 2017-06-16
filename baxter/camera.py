@@ -20,7 +20,7 @@ class Camera:
     default_resolution = default_width, default_height
 
     def __init__(self, camera_name, resolution=(default_width, default_height)):
-        # type: (Camera, str, tuple) -> None
+        # type: (str, tuple) -> None
         """
         Create camera instance by camera name
         

@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import math
 import baxter_interface
 import cv2
 import rospy
@@ -79,6 +80,12 @@ class HandMover:
         euler = tf.transformations.euler_from_quaternion(quaternion)
 
         return [position[0], position[1], position[2], euler[0], euler[1], euler[2]]
+
+    def rotate_gripper(self, angle):
+        rpy_pose = self.get_current_pose()
+
+
+        return self._move(rpy_pose, move=True)
 
     def set_gripper(self, command):
         if command is True:

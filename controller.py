@@ -62,30 +62,39 @@ class RobotController:
         Main method, than make word from start position
         
         :param word: aim word
-        :param start_point:  start position for start first letter
         :return: True if word suc
         """
         rc = RobotController
 
         # TODO: shift_aim must be load from cfg
-        shift_aim = 0.01
+        shift_aim = 0.06
 
         to_aim = list(self.end_position)
         self.set_start_pose()
         for letter in word:
+            print 'roi_rect'
             roi_rect = self.next_aim(letter)
+            if roi_rect is None:
+                print 'Not found next letter'
+                break
+            print 'get_rect_center'
             from_aim = rc.get_rect_center(roi_rect)
+            print 'move_cube'
             self.move_cube(from_aim, to_aim)
-            to_aim[0] += shift_aim
+            to_aim[1] += shift_aim
+            print 'set_start_pose'
             self.set_start_pose()
 
     def set_start_pose(self):
-        self.hand.try_move(*self.start_pose)
+        print 'Moving to start pose, result: ',
+        print self.hand.try_move(*self.start_pose)
+        print self.hand.rotate_gripper(0.0)
 
     def random_move(self):
-        while True:
-            dx = 0.5 * random.random() - 0.25
-            dy = 0.5 * random.random() - 0.25
+        for attempt in range(3):
+            step = 0.125
+            dx = step * random.random() - step / 2
+            dy = step * random.random() - step / 2
             if self.hand.try_move(dx, dy):
                 return
 
@@ -108,19 +117,24 @@ class RobotController:
 
     def find_letter(self, cubes_image, aim_letter):
         print 'Try find letter', aim_letter
+
         letter_class = self.alphabet.get_class(aim_letter)
-        letters = self.letter_recognizer.letters(cubes_image)
-        if letter_class in letters:
-            print 'Found', aim_letter, 'letter'
-            return letters.index(letter_class)
-        raise RuntimeError('not find letter' + str(aim_letter))
+        recognized_letter_classes = self.letter_recognizer.letters(cubes_image)
+
+        print 'Found', u' '.join(map(self.alphabet.get_letter, recognized_letter_classes))
+
+        if letter_class in recognized_letter_classes:
+            print 'Aim letter found success!'
+            return recognized_letter_classes.index(letter_class)
 
     def next_aim(self, letter):
-        for attempt in range(30):
+        for attempt in range(2):
             cubes, rects = self.find_cubes()
             index = self.find_letter(cubes, letter)
-            if index:
+            letter_found = index is not None
+            if letter_found:
                 return rects[index]
+            self.random_move()
 
     def aim_to(self, aim):
         """
@@ -151,22 +165,26 @@ class RobotController:
 
     def take(self):
         pose = self.hand.get_current_pose()
-        print self.hand.set_gripper(True)
-        print self.hand.try_move(z=self.height_plane)
-        print self.hand.set_gripper(False)
-        print self.hand.try_move(z=pose[2])
+        to_do = [
+            lambda: self.hand.set_gripper(True),
+            lambda: self.hand.try_move(z=self.height_plane),
+            lambda: self.hand.set_gripper(False),
+            lambda: self.hand.try_move(z=pose[2])
+        ]
+        print all([action() for action in to_do])
 
     def give_back(self):
         pose = self.hand.get_current_pose()
         print self.hand.try_move(z=self.height_plane)
         print self.hand.set_gripper(True)
         print self.hand.try_move(z=pose[2])
+        print self.hand.rotate_gripper(0.0)
 
     def move_cube(self, from_aim, to_aim):
         print 'moving', from_aim, '->', to_aim
         self.aim_to(from_aim)
         self.take()
-        self.aim_to(to_aim)
+        self.hand.try_move(x=to_aim[0], y=to_aim[1])
         self.give_back()
 
     def set_letter_detector(self, letter_recognizer):
@@ -181,9 +199,8 @@ class RobotController:
     def get_rect_center(rect):
         cx = rect[0] + rect[2] / 2
         cy = rect[1] + rect[3] / 2
-        return cx, cy
-
-
+        print rect, cx, cy
+        return cy, cx
 
     @staticmethod
     def _load_component(detector):
@@ -208,28 +225,8 @@ def start_controller(aim_word):
     robot.make_word(aim_word)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Main script for play cube')
-
-    parser.add_argument('-w', '--word', required=True,
-                        help='Aim word')
-    parser.add_argument('-c', '--config', required=True,
-                        help='Config with info about detectors, start positions e.t')
-
-    arguments = parser.parse_args()
-    rospy.init_node('cube_puzzle2')
-
+def run_look_at_mode(robot):
     import cv2
-
-    import sys
-
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-
-
-    robot = RobotController(arguments.config)
-
     from tools.image_cutter import ClickChecker
     cv2.namedWindow('df')
     clicker = ClickChecker('df')
@@ -252,8 +249,17 @@ if __name__ == "__main__":
         for cc in c:
             robot.aim_to(cc[::-1])
 
-    os.kill(os.getpid(), signal.SIGINT)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Main script for play cube')
 
-    rospy.spin()
+    parser.add_argument('-w', '--word', required=True,
+                        help='Aim word')
+    parser.add_argument('-c', '--config', required=True,
+                        help='Config with info about detectors, start positions e.t')
 
-    # robot.take()
+    arguments = parser.parse_args()
+    rospy.init_node('cube_puzzle')
+
+    robot = RobotController(arguments.config)
+    robot.make_word(arguments.word)
