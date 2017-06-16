@@ -2,6 +2,8 @@
 
 ![](https://user-images.githubusercontent.com/7226846/27238362-3f1ba6fc-52d5-11e7-8909-6206cbccbe6e.png)
 
+Show demo on [YouTube](https://youtu.be/89UufNFh28s)
+
 Images recognition system for Baxter robot. 
 Also Baxter now can play with cubes!
 
