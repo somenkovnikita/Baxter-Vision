@@ -10,20 +10,23 @@ from vision.cubedetectors import CascadeCubeDetector
 
 def performance(images, detector):
     color = 255, 255, 0
+    i = 0
     for image_ in images:
         image = image_.copy()
         image = cv2.resize(image, None, fx=0.5, fy=0.5)
         start = timeit.default_timer()
         cubes = detector.cubes(image)
         stop = timeit.default_timer()
-        print stop - start
+        # print stop - start
 
-        # for x, y, w, h in cubes:
-        #     start = x, y
-        #     end = x + w, y + h
-        #     cv2.rectangle(image, start, end, color, 2)
-        # cv2.imshow('Look and count!', image)
-        # cv2.waitKey()
+        for x, y, w, h in cubes:
+            start = x, y
+            end = x + w, y + h
+            # cv2.imwrite('out_' + str(i) + '.png', image[y:y+h,x:x+w])
+            i+=1
+            cv2.rectangle(image, start, end, color, 2)
+        cv2.imshow('Look and count!', image)
+        cv2.waitKey()
 
 
 if __name__ == '__main__':

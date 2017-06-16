@@ -7,8 +7,6 @@ weights = 'snapshots_iter_77000.caffemodel'
 caffe.set_mode_gpu()
 caffe.set_device(0)
 
-
-
 net = caffe.Net(model, weights, caffe.TEST)
 
 image = cv2.imread('assets/letters/temp_training_set/0.png')

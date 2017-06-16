@@ -50,11 +50,14 @@ class RobotController:
         self.start_pose = map(float, start_position.split(';'))
         self.height_plane = float(parser.get('positions', 'height_plane'))
 
+        end_position = parser.get('positions', 'end_position')
+        self.end_position = map(float, end_position.split(';'))
+
         hand = parser.get('positions', 'hand')
         self.hand = HandMover(hand)
         self.camera = Camera(hand + '_hand')
 
-    def make_word(self, word, start_point=(0, 0)):
+    def make_word(self, word):
         """
         Main method, than make word from start position
         
@@ -62,33 +65,29 @@ class RobotController:
         :param start_point:  start position for start first letter
         :return: True if word suc
         """
-        for letter in word:
-            index = None
-            while True:
-                cubes, rects = self.find_cubes()
-                index = self.find_letter(cubes, letter)
-                if not index:
-                    continue
-                aim_from = rects[index]
-                cx = aim_from[0] + aim_from[2] / 2
-                cy = aim_from[1] + aim_from[3] / 2
-                print cx, cy, aim_from
-                self.aim_to((cy, cx))
-                self.take()
-                self.give_back()
-                break
+        rc = RobotController
 
-            # self.move_cube()
+        # TODO: shift_aim must be load from cfg
+        shift_aim = 0.01
+
+        to_aim = list(self.end_position)
+        self.set_start_pose()
+        for letter in word:
+            roi_rect = self.next_aim(letter)
+            from_aim = rc.get_rect_center(roi_rect)
+            self.move_cube(from_aim, to_aim)
+            to_aim[0] += shift_aim
+            self.set_start_pose()
 
     def set_start_pose(self):
         self.hand.try_move(*self.start_pose)
 
     def random_move(self):
         while True:
-            dx = 2.0 * random.random() - 1.0
-            dy = 2.0 * random.random() - 1.0
+            dx = 0.5 * random.random() - 0.25
+            dy = 0.5 * random.random() - 0.25
             if self.hand.try_move(dx, dy):
-                break
+                return
 
     def find_cubes(self):
         for attempt in range(20):
@@ -105,8 +104,7 @@ class RobotController:
                 print 'Found %d cubes' % len(cubes)
                 return map(cutter, cubes), cubes
 
-            # self.random_move()
-        raise Exception('Cubes not find!')
+        raise RuntimeError('cubes not find')
 
     def find_letter(self, cubes_image, aim_letter):
         print 'Try find letter', aim_letter
@@ -115,6 +113,14 @@ class RobotController:
         if letter_class in letters:
             print 'Found', aim_letter, 'letter'
             return letters.index(letter_class)
+        raise RuntimeError('not find letter' + str(aim_letter))
+
+    def next_aim(self, letter):
+        for attempt in range(30):
+            cubes, rects = self.find_cubes()
+            index = self.find_letter(cubes, letter)
+            if index:
+                return rects[index]
 
     def aim_to(self, aim):
         """
@@ -123,7 +129,7 @@ class RobotController:
         :param aim: coordinates aim 
         :return: True if move success False otherwise
         """
-        # TODO: delete this const
+        # TODO: must be load from cfg
 
         print 'aim to', aim
         aim_w_percent = 0.56
@@ -135,7 +141,7 @@ class RobotController:
         aim_y = int(round(aim_h_percent * h))
 
         pose = self.hand.get_current_pose()
-        # TODO: delete this const
+        # TODO: must be load from cfg
         z_px = -330.0 * pose[2] + 201.0
 
         dx = robot_to_px * (aim[0] - aim_y) / z_px
@@ -157,6 +163,7 @@ class RobotController:
         print self.hand.try_move(z=pose[2])
 
     def move_cube(self, from_aim, to_aim):
+        print 'moving', from_aim, '->', to_aim
         self.aim_to(from_aim)
         self.take()
         self.aim_to(to_aim)
@@ -169,6 +176,14 @@ class RobotController:
     def set_cube_detector(self, cube_detector):
         # type: (ICubeDetector) -> None
         self.cube_detector = cube_detector
+
+    @staticmethod
+    def get_rect_center(rect):
+        cx = rect[0] + rect[2] / 2
+        cy = rect[1] + rect[3] / 2
+        return cx, cy
+
+
 
     @staticmethod
     def _load_component(detector):

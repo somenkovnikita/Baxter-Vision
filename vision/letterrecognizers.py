@@ -10,7 +10,7 @@ class SVMLetterRecognizer(ILetterRecognizer):
     Support Vector Machine
     See description of override method in interface
     """
-    image_size = 25, 25
+    image_size = 20, 20
 
     def __init__(self, config_file):
         # type: (SVMLetterRecognizer, str) -> None
@@ -57,6 +57,7 @@ class SVMLetterRecognizer(ILetterRecognizer):
         ])
 
         image = cv2.filter2D(image, cv2.CV_8U, kern)
+
         image = cv2.resize(image, SVMLetterRecognizer.image_size)
         return image.flatten().astype(float) / 255.0
 
@@ -65,8 +66,8 @@ class CaffeNeural(ILetterRecognizer):
     def __init__(self, model, weights):
         import caffe
 
-        caffe.set_mode_gpu()
-        caffe.set_device(0)
+        # caffe.set_mode_cpu()
+        # caffe.set_device(0)
 
         self.net = caffe.Net(model, weights, caffe.TEST)
 

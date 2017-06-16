@@ -18,7 +18,9 @@ def prepare_images(paths):
             pass
     images = map(cv2.imread, paths)
     processing = SVMLetterRecognizer.preprocessing
-    return map(processing, images)
+    i = map(processing, images)
+  
+    return i           
 
 
 def prepare_classes(classes):

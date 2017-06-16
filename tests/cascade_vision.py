@@ -34,6 +34,6 @@ def run(frame):
     cv2.imshow("Cascade", image)
     # 
     key = cv2.waitKey(100) & 0xFF
-    # if key == ord('s'):
-    #     cv2.imwrite(str(i) + '.png', image)
-    #     i += 1
+    if key == ord('s'):
+        cv2.imwrite(str(i) + '.png', image)
+        i += 1

@@ -17,7 +17,7 @@ class HandMover:
     Class for kinematics calculate for moving robot limb in plane table
     """
     def __init__(self, limb):
-        # type: (HandMover, str) -> None
+        # type: (str) -> None
         """
         Choose limb to controlling
         

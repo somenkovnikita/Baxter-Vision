@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 import cv2
 
 from tools.image_cutter import ClickChecker
@@ -37,6 +39,9 @@ def init(config):
     # FIXME: hard code path!
     # ILetterRecognizer.setup_letters('assets/letters/training_set/marked.list')
     letter_recognizer = SVMLetterRecognizer('config/letter_recognizer.svm')
+    # letter_recognizer = CaffeNeural(
+    #     'config/symbolnet_deploy.prototxt',
+    #     'config/letter_recognizer_v1.caffemodel')
 
     cv2.namedWindow('Cascade')
     clicks = ClickChecker('Cascade')
@@ -68,7 +73,9 @@ def run(frame):
 
     letters = list()
     if cutted_cubes:
+        start = time.clock()
         letters = letter_recognizer.letters(cutted_cubes)
+        print time.clock() - start
 
     for i, cutted_cube in enumerate(cubes_coordinates):
         start = tuple(cutted_cube[:2])
